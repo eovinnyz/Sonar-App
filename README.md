@@ -1,4 +1,4 @@
-# Sonar — versão 1.16.0
+# Sonar — versão 1.16.1
 
 Player de música no estilo Spotify feito para o grupo de amigos. Roda direto no navegador (PC e celular).
 
