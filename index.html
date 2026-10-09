@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>(function(){try{var h=document.documentElement,c={};try{c=JSON.parse(localStorage.getItem('sonar-cfg')||'{}')}catch(e){}var pc=c.layout==='desktop'||(c.layout!=='mobile'&&innerWidth>=900);h.classList.add(pc?'pcx':'mbx');if(!localStorage.getItem('sonar-session'))h.classList.add('gout')}catch(e){}})()</script>
+<title>Sonar</title>
+<link rel="icon" type="image/png" href="assets/favicon.png"><link rel="apple-touch-icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="sp"><img src="assets/logo.webp" alt="Sonar"><div class="bar"><i></i></div></div>
+<div id="sp2" class="gate"><div class="s2glow"></div><i class="ring"></i><i class="ring"></i><i class="ring"></i><img class="sym" alt="Sonar"><img class="word" alt=""></div>
+<div id="lg" class="gate" hidden><div class="lg-bg"><div class="lg-blur"><img class="lbs" alt=""><img class="lbw" alt=""></div></div><div class="lg-panel"><div class="lg-logo"><img class="sym" alt="Sonar"><img class="word" alt=""></div><h1 class="lg-t">Entrar</h1><p class="lg-s">Digite seu nome de usuário para continuar.</p><label class="lg-f"><input id="lgu" type="text" placeholder="Nome de usuário" aria-label="Nome de usuário" autocomplete="username" autocapitalize="off" spellcheck="false" maxlength="24"></label><div id="lge" class="lg-e" role="alert"></div><button id="lgb" class="lg-b" type="button">Entrar</button><div class="lg-v">Versão <span id="lgv"></span></div></div></div>
+<div id="app"><div id="ctr"><header id="hd"></header><main id="mn"></main></div><aside id="side"></aside></div>
+<nav id="bar"></nav>
+<div id="st"></div>
+<div id="sh"><div class="shc"><div class="shh"><b id="sht"></b><button class="ic" data-a="shx" aria-label="Fechar">✕</button></div><div id="shb"></div></div></div>
+<div id="md"><div>
+ <label>Título</label><input id="e1"><label>Artista</label><input id="e2"><label>Participações (separe por vírgula)</label><input id="e4"><label>Álbum</label><input id="e3"><button id="ecs">Escolher capa da música</button><button id="ecv">Escolher capa do álbum</button>
+ <div class="acts"><button id="ec">Cancelar</button><button class="pri" id="es">Salvar</button></div>
+</div></div>
+<datalist id="dl-alb"></datalist><datalist id="dl-art"></datalist>
+<div id="pf"><div class="cfh" style="padding:calc(10px + env(safe-area-inset-top,0px)) 16px 0"><button class="ic" data-a="pfx" aria-label="Voltar" style="font-size:28px">‹</button></div><div class="pfm"><h2>Ainda não temos central de perfil.</h2><div class="s">Aguarde.</div></div></div>
+<div id="cf"></div>
+<div id="np"></div>
+<div id="am"><div><label>Nome do artista</label><input id="a1"><label>Descrição</label><textarea id="a2" rows="4"></textarea><button id="aph">Escolher foto do artista</button><label style="display:block;margin:8px 0"><input type="checkbox" id="a3" style="width:auto;margin:0 8px 0 0;display:inline">Verificado</label><div class="acts"><button id="ac">Cancelar</button><button class="pri" id="as">Salvar</button></div></div></div>
+<div id="lm"><div><label>Letra (para tempo real, comece a linha com [min:seg])</label><textarea id="l1" rows="10"></textarea><button id="lt">Inserir tempo atual na linha</button><div class="acts"><button id="lc">Cancelar</button><button class="pri" id="ls">Salvar</button></div></div></div>
+<input type="file" id="fc" accept="image/*" hidden>
+<input type="file" id="uf" accept="audio/*,.mp3,.m4a,.flac,.wav,.ogg,.aac,.opus" multiple hidden>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
