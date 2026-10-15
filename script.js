@@ -3,16 +3,16 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 let AR={},covN=false,upT=-1,rep=false,npOpen=false,covA=null,editA=null,lastA=-2;
 let songs=[],tab='home',detail=null,queue=[],qi=-1,db=null,cur=null,ctx=[],editId=null,delId=null;
 const au=new Audio();
-const I={play:'M8 5v14l11-7z',pause:'M6 5h4v14H6zm8 0h4v14h-4z',prev:'M6 6h2v12H6zm3.5 6 8.5 6V6z',next:'M16 6h2v12h-2zM6 18l8.5-6L6 6z',up:'M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z',out:'M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z',bt:'M17.71 7.71L12 2h-1v7.59L6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 11 14.41V22h1l5.71-5.71-4.3-4.29 4.3-4.29zM13 5.83l1.88 1.88L13 9.59V5.83zm1.88 10.46L13 18.17v-3.76l1.88 1.88z',plc:'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z',chk:'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z',user:'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z',padd:'M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z',chart:'M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z',hist:'M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z',mega:'M18 11v2h4v-2h-4zm-2 6.61c.96.71 2.21 1.65 3.2 2.39.4-.53.8-1.07 1.2-1.6-.99-.74-2.24-1.68-3.2-2.4-.4.54-.8 1.08-1.2 1.61zM20.4 5.6c-.4-.53-.8-1.07-1.2-1.6-.99.74-2.24 1.68-3.2 2.4.4.53.8 1.07 1.2 1.6.96-.72 2.21-1.65 3.2-2.4zM4 9c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v4h2v-4h1l5 3V6L8 9H4zm11.5 3c0-1.33-.58-2.53-1.5-3.35v6.69c.92-.81 1.5-2.01 1.5-3.34z',mail:'M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z',h:'M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z',hf:'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z',more:'M6 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm12 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-6 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z',home:'M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z',search:'M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z',lib:'M4 6H2v14c0 1.1.9 2 2 2h14v-2H4zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10zm-4 4H9v-2h6zm4-8H9V5h10z',bell:'M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1z',vol:'M3 9v6h4l5 5V4L7 9zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z',gear:'M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z',cfg:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',shuf:'M10.6 9.2L4 2.6 2.6 4l6.6 6.6zM14.5 4l2.5 2.5L2.6 20.9 4 22.3 18.4 7.9 21 10.5V4zM14.8 13.4l-1.4 1.4 3.6 3.6L14.5 21H21v-6.5l-2.5 2.5z',rep:'M7 7h10v3l4-4-4-4v3H5v6h2zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2z',dn:'M7.4 8.6 12 13.2l4.6-4.6L18 10l-6 6-6-6z',cam:'M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8.5 13.5l2.5 3 3.5-4.5 4.5 6H5z',edit:'M3 17.25V21h3.75L17.8 9.94l-3.75-3.75zM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z',del:'M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z'};
+const I={play:'M8 5v14l11-7z',pause:'M6 5h4v14H6zm8 0h4v14h-4z',prev:'M6 6h2v12H6zm3.5 6 8.5 6V6z',next:'M16 6h2v12h-2zM6 18l8.5-6L6 6z',up:'M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z',cloud:'M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z',out:'M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z',bt:'M17.71 7.71L12 2h-1v7.59L6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 11 14.41V22h1l5.71-5.71-4.3-4.29 4.3-4.29zM13 5.83l1.88 1.88L13 9.59V5.83zm1.88 10.46L13 18.17v-3.76l1.88 1.88z',plc:'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z',chk:'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z',user:'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z',padd:'M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z',chart:'M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z',hist:'M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z',mega:'M18 11v2h4v-2h-4zm-2 6.61c.96.71 2.21 1.65 3.2 2.39.4-.53.8-1.07 1.2-1.6-.99-.74-2.24-1.68-3.2-2.4-.4.54-.8 1.08-1.2 1.61zM20.4 5.6c-.4-.53-.8-1.07-1.2-1.6-.99.74-2.24 1.68-3.2 2.4.4.53.8 1.07 1.2 1.6.96-.72 2.21-1.65 3.2-2.4zM4 9c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v4h2v-4h1l5 3V6L8 9H4zm11.5 3c0-1.33-.58-2.53-1.5-3.35v6.69c.92-.81 1.5-2.01 1.5-3.34z',mail:'M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z',h:'M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z',hf:'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z',more:'M6 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm12 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-6 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z',home:'M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z',search:'M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z',lib:'M4 6H2v14c0 1.1.9 2 2 2h14v-2H4zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10zm-4 4H9v-2h6zm4-8H9V5h10z',bell:'M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1z',vol:'M3 9v6h4l5 5V4L7 9zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02z',gear:'M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z',cfg:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',shuf:'M10.6 9.2L4 2.6 2.6 4l6.6 6.6zM14.5 4l2.5 2.5L2.6 20.9 4 22.3 18.4 7.9 21 10.5V4zM14.8 13.4l-1.4 1.4 3.6 3.6L14.5 21H21v-6.5l-2.5 2.5z',rep:'M7 7h10v3l4-4-4-4v3H5v6h2zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2z',dn:'M7.4 8.6 12 13.2l4.6-4.6L18 10l-6 6-6-6z',cam:'M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8.5 13.5l2.5 3 3.5-4.5 4.5 6H5z',edit:'M3 17.25V21h3.75L17.8 9.94l-3.75-3.75zM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75z',del:'M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6zM19 4h-3.5l-1-1h-5l-1 1H5v2h14z'};
 const ico=(p)=>`<svg viewBox="0 0 24 24"><path d="${p}"/></svg>`;
 function openDB(){return new Promise(r=>{try{const q=indexedDB.open('musicas',2);q.onupgradeneeded=()=>{const d=q.result;if(!d.objectStoreNames.contains('songs'))d.createObjectStore('songs',{keyPath:'id'});if(!d.objectStoreNames.contains('artists'))d.createObjectStore('artists',{keyPath:'name'})};q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)}catch(e){r(null)}})}
 function dbAll(){return new Promise(r=>{if(!db)return r([]);try{const q=db.transaction('songs').objectStore('songs').getAll();q.onsuccess=()=>r(q.result||[]);q.onerror=()=>r([])}catch(e){r([])}})}
-function dbPut(s){try{db&&db.transaction('songs','readwrite').objectStore('songs').put(s)}catch(e){}}
-function dbDel(id){try{db&&db.transaction('songs','readwrite').objectStore('songs').delete(id)}catch(e){}}
+function dbPut(s){if(driveOn()){if(driveAdmin)catMark();return}try{db&&db.transaction('songs','readwrite').objectStore('songs').put(s)}catch(e){}}
+function dbDel(id){if(driveOn()){if(driveAdmin)catMark();return}try{db&&db.transaction('songs','readwrite').objectStore('songs').delete(id)}catch(e){}}
 const tx=(st,m)=>db.transaction(st,m).objectStore(st);
 function adbAll(){return new Promise(r=>{try{const q=tx('artists').getAll();q.onsuccess=()=>r(q.result||[]);q.onerror=()=>r([])}catch(e){r([])}})}
-function adbPut(a){try{db&&tx('artists','readwrite').put(a)}catch(e){}}
-function adbDel(n){try{db&&tx('artists','readwrite').delete(n)}catch(e){}}
+function adbPut(a){if(driveOn()){if(driveAdmin)catMark();return}try{db&&tx('artists','readwrite').put(a)}catch(e){}}
+function adbDel(n){if(driveOn()){if(driveAdmin)catMark();return}try{db&&tx('artists','readwrite').delete(n)}catch(e){}}
 function readTags(f){return new Promise(r=>{try{window.jsmediatags.read(f,{onSuccess:t=>r(t.tags||{}),onError:()=>r({})})}catch(e){r({})}})}
 function picUrl(p){if(!p)return'';try{let s='';for(const x of p.data)s+=String.fromCharCode(x);return'data:'+p.format+';base64,'+btoa(s)}catch(e){return''}}
 function getDur(f){return new Promise(r=>{const a=new Audio(),u=URL.createObjectURL(f);a.preload='metadata';a.onloadedmetadata=()=>{r(a.duration);URL.revokeObjectURL(u)};a.onerror=()=>{r(0);URL.revokeObjectURL(u)};a.src=u})}
@@ -39,7 +39,7 @@ function songRow(s,i,num,hl){
 const albumCard=(k,l)=>`<button class="card" data-a="open" data-t="album" data-k="${esc(k)}">${cov(l,k)}<div class="t">${esc(k)}</div><div class="s sm">${aph(l[0].artist).replace('class="cv"','class="mini"')}${esc(l[0].artist)}${vb(l[0].artist)} · ${aType(l.length)}</div></button>`;
 function play(i){
  const s=songs.find(x=>x.id===queue[i]);if(!s)return;
- qi=i;barMode='mini';SOC.plays=SOC.plays||{};SOC.plays[s.id]=(SOC.plays[s.id]||0)+1;SOC.recent=[s.id,...(SOC.recent||[]).filter(x=>x!==s.id)].slice(0,30);socSave();if(cur)URL.revokeObjectURL(cur);cur=URL.createObjectURL(s.file);au.src=cur;au.playbackRate=S.speed||1;graph();au.play().catch(()=>{});
+ qi=i;barMode='mini';SOC.plays=SOC.plays||{};SOC.plays[s.id]=(SOC.plays[s.id]||0)+1;SOC.recent=[s.id,...(SOC.recent||[]).filter(x=>x!==s.id)].slice(0,30);socSave();if(cur)URL.revokeObjectURL(cur);au.dataset.retry='';if(s.file){au.crossOrigin=null;cur=URL.createObjectURL(s.file);au.src=cur}else{cur=null;au.crossOrigin='anonymous';au.dataset.u=s.url||'';au.src=s.url}au.playbackRate=S.speed||1;graph();au.play().catch(()=>{});
  try{navigator.mediaSession.metadata=new MediaMetadata({title:s.title,artist:s.artist,album:s.album,artwork:sc(s)?[{src:sc(s)}]:[]})}catch(e){}
  player();render();if(npOpen)renderNP()}
 function startQ(ids,i){queue=ids;tapeSrc=(detail&&detail.t==='tape')?detail.k:null;play(i)}
@@ -63,6 +63,11 @@ document.addEventListener('click',e=>{
  else if(a==='prof')openAcc('menu')
  else if(a==='conn')connectDev()
  else if(a==='addcur'){const c=cs();if(c)addToListSheet(c.id)}
+ else if(a==='gsign'){(async()=>{try{await gToken();if(driveOn()){await driveCheckAdmin();toast(driveAdmin?'Administrador conectado':'Esta conta Google não é a administradora desta biblioteca.')}else toast('Google conectado')}catch(e){toast(e.message)}renderAcc();render()})()}
+ else if(a==='gsetup'){(async()=>{try{toast('Criando a pasta no Drive...');await driveSetup();toast('Drive configurado!')}catch(e){toast('Erro: '+e.message)}renderAcc();render()})()}
+ else if(a==='gcopy'){try{navigator.clipboard.writeText($('#gcfg').textContent);toast('Copiado')}catch(e){toast('Selecione e copie o texto')}}
+ else if(a==='gout'){try{if(GTOK&&gisReady())google.accounts.oauth2.revoke(GTOK,()=>{})}catch(e){}GTOK=null;GEXP=0;driveAdmin=false;try{sessionStorage.removeItem('sonar-gtok')}catch(e){}toast('Desconectado do Google');renderAcc();render()}
+ else if(a==='gimport'){driveImportLocal().catch(e=>toast('Erro: '+e.message))}
  else if(a==='accout')logout()
  else if(a==='accgo'){accPage=d.v;renderAcc()}
  else if(a==='accset'){closeAcc();openCfg()}
@@ -102,7 +107,7 @@ document.addEventListener('click',e=>{
  else if(a==='newpl')newListSheet()
  else if(a==='editS'){closeSheet();const s=songs.find(x=>x.id===d.id);if(s){editId=s.id;$('#e1').value=s.title;$('#e2').value=s.artist;$('#e3').value=s.album;$('#e4').value=(s.feats||[]).join(', ');$('#md').style.display='flex'}}
  else if(a==='scovS'){closeSheet();openSongCover(d.id)}
- else if(a==='sdel'){if(delId===d.id){songs=songs.filter(x=>x.id!==d.id);dbDel(d.id);SOC.liked=SOC.liked.filter(x=>x!==d.id);SOC.lists.forEach(l=>{l.ids=l.ids.filter(x=>x!==d.id)});socSave();if(queue[qi]===d.id){au.pause();queue=[];qi=-1}delId=null;closeSheet();render()}else{delId=d.id;songSheet(d.id)}}
+ else if(a==='sdel'){if(delId===d.id){const gone=songs.find(x=>x.id===d.id);songs=songs.filter(x=>x.id!==d.id);dbDel(d.id);if(driveOn()&&gone)driveTrash(gone);SOC.liked=SOC.liked.filter(x=>x!==d.id);SOC.lists.forEach(l=>{l.ids=l.ids.filter(x=>x!==d.id)});socSave();if(queue[qi]===d.id){au.pause();queue=[];qi=-1}delId=null;closeSheet();render()}else{delId=d.id;songSheet(d.id)}}
  else if(a==='dlist'){if(delId==='l:'+d.k){SOC.lists=SOC.lists.filter(l=>l.id!==d.k);socSave();delId=null;detail=null}else delId='l:'+d.k;render()}
  else if(a==='ledit'){lyId=(cs()||{}).id;$('#l1').value=(cs()||{}).lyrics||'';$('#lm').style.display='flex'}
  else if(a==='seek'){if(d.t!=='')au.currentTime=+d.t}
@@ -125,10 +130,10 @@ $('#es').onclick=()=>{
  if(s){s.title=$('#e1').value.trim()||s.title;s.artist=$('#e2').value.trim()||s.artist;s.album=$('#e3').value.trim()||s.album;s.feats=$('#e4').value.split(',').map(x=>x.trim()).filter(Boolean);dbPut(s)}
  $('#md').style.display='none';render();player();if(npOpen)renderNP()};
 let covK=null,covS=null;
-function openCover(k){covK=k;covS=null;covA=null;covN=false;covP=false;$('#fc').click()}
-function openSongCover(id){covS=id;covK=null;covA=null;covN=false;covP=false;$('#fc').click()}
+function openCover(k){warm();covK=k;covS=null;covA=null;covN=false;covP=false;$('#fc').click()}
+function openSongCover(id){warm();covS=id;covK=null;covA=null;covN=false;covP=false;$('#fc').click()}
 function resize(f){return new Promise(r=>{const u=URL.createObjectURL(f),im=new Image();im.onload=()=>{const m=Math.min(1,400/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*m;c.height=im.height*m;c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);r(c.toDataURL('image/jpeg',.85))};im.onerror=()=>r('');im.src=u})}
-$('#fc').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f||(covK==null&&covS==null&&covA==null&&!covN&&!covP))return;const url=await resize(f);if(!url)return;if(covP){PROF.photo=url;profSave();renderAcc();render();return}if(covN){U.cover=url;renderUp();return}if(covA!=null){const a={...art(covA)};a.photo=url;AR[covA]=a;adbPut(a)}else if(covS){const s=songs.find(x=>x.id===covS);if(s){s.scover=url;dbPut(s)}}else songs.filter(s=>s.album===covK).forEach(s=>{s.acover=url;dbPut(s)});render();player();if(npOpen)renderNP()};
+$('#fc').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f||(covK==null&&covS==null&&covA==null&&!covN&&!covP))return;const url=await resize(f);if(!url)return;if(covP){PROF.photo=url;profSave();renderAcc();render();return}if(covN){U.cover=url;renderUp();return}if(covA!=null){await setArtistPhoto(covA,url).catch(e=>toast('Drive: '+e.message))}else if(covS){await setSongCover(covS,url).catch(e=>toast('Drive: '+e.message))}else await setAlbumCover(covK,url).catch(e=>toast('Drive: '+e.message));render();player();if(npOpen)renderNP()};
 $('#ecs').onclick=()=>{if(editId)openSongCover(editId)};
 $('#ecv').onclick=()=>{const s=songs.find(x=>x.id===editId);if(s)openCover(s.album)};
 function openNP(){
@@ -153,7 +158,7 @@ function npTick(){
  const ly=$('#ly');if(!ly)return;let a=-1;const cs2=[...ly.children];
  cs2.forEach((c,i)=>{const v=c.dataset.t;if(v!==undefined&&v!==''&&+v<=au.currentTime)a=i});
  if(a!==lastA){lastA=a;cs2.forEach((c,i)=>c.classList.toggle('act',i===a));const c=cs2[a];if(c)ly.scrollTo({top:c.offsetTop-ly.clientHeight/2+c.clientHeight/2,behavior:'smooth'})}}
-$('#aph').onclick=()=>{covA=editA;covK=null;covS=null;covN=false;covP=false;$('#fc').click()};
+$('#aph').onclick=()=>{warm();covA=editA;covK=null;covS=null;covN=false;covP=false;$('#fc').click()};
 $('#ac').onclick=()=>{$('#am').style.display='none'};
 $('#as').onclick=()=>{
  const old=editA,nn=$('#a1').value.trim()||old,a={...art(old),name:nn,bio:$('#a2').value.trim(),verified:$('#a3').checked};
@@ -184,6 +189,7 @@ async function createUp(){
  if(songs.some(s=>s.album===name))return err('Já existe um projeto com esse nome.');
  if(U.n<T.min||U.n>T.max)return err('Quantidade de faixas inválida para '+T.l+'.');
  for(let i=0;i<U.n;i++)if(!U.files[i])return err('Falta o arquivo da faixa '+(i+1)+'.');
+ if(driveOn()){if(!driveAdmin)return err('Entre com o Google (administrador) para enviar músicas ao Drive.');return createUpDrive(name,artist,T)}
  U.msg='Criando...';renderUp();
  const feats=U.feats.split(',').map(x=>x.trim()).filter(Boolean),base=Date.now();
  for(let i=0;i<U.n;i++){
@@ -252,8 +258,8 @@ function renderCfg(){
  apar:`<div class="cr"><div>Modo</div><div class="seg">${[['dark','Escuro'],['light','Claro'],['auto','Automático']].map(([k,l])=>`<button data-c="theme" data-v="${k}" class="${S.theme===k?'on':''}">${l}</button>`).join('')}</div></div><div>Cor de destaque</div><div class="sws">${pal.map(([n,h])=>`<button data-c="acc" data-v="${h}" class="${S.accent===h?'on':''}" style="background:${h}" aria-label="${n}"></button>`).join('')}<input type="color" data-c="cust" value="${S.accent}" aria-label="Cor personalizada"></div><div id="cmsg"></div><div class="s">Branco aparece só no tema escuro e preto só no claro, para sempre ficarem em destaque.</div><div class="cr"><div>Modo desktop<small>Auto segue o tamanho da tela</small></div><div class="seg">${[['auto','Auto'],['desktop','Sim'],['mobile','Não']].map(([k,l])=>`<button data-c="lay" data-v="${k}" class="${S.layout===k?'on':''}">${l}</button>`).join('')}</div></div>`,
  bib:`<div class="cr"><div>Ordenar músicas por</div>${sel('sort',S.sort,[['title','Título'],['artist','Artista'],['recent','Mais recentes']])}</div><div class="cr"><div>Mostrar selo de verificado</div>${sw('badge',S.badge)}</div><div class="cr"><div>Tamanho da letra</div>${sel('lyr',S.lyr,[[18,'Pequena'],[22,'Média'],[28,'Grande']])}</div>`,
  notif:`<div class="cr"><div>Lançamentos de quem você segue<small>Avisar no sino quando sair música nova</small></div>${sw('notif',S.notif!==false)}</div>`,
- arm:`<div class="cr"><div>${songs.length} música(s)<small>${mb} MB neste aparelho</small></div>${isAdm()?`<button class="danger" data-c="wipe">${wipeArm?'Toque de novo para apagar tudo':'Apagar biblioteca'}</button>`:''}</div>`,
- info:`<div class="cr"><div>Sonar<small>Versão ${APP_VERSION}</small></div></div><div class="cr"><div>Novidades<small>Correção do tremido nas logos do login e animações mais leves</small></div></div><div class="cr"><div>Criador<small>eo_vinnyz</small></div></div><div class="cr"><div>Feito com<small>Claude, da Anthropic. Este app foi construído em conversa com ele.</small></div></div><div class="cr"><div>Dados<small>Tudo fica salvo neste aparelho</small></div></div>`};
+ arm:driveOn()||driveSetupMode()?`<div class="cr"><div>Google Drive<small>${driveOn()?(driveAdmin?'Administrador conectado':'Modo ouvinte (somente leitura)'):'Configuração pendente'}</small></div></div><div class="cr"><div>${songs.length} música(s)<small>Biblioteca carregada do Drive</small></div><button class="pill" data-c="drefresh">Atualizar</button></div><div class="cr"><div>Testar conexão<small>Mostra o motivo de qualquer erro</small></div><button class="pill" data-c="ddiag">Testar</button></div><div id="dmsg" class="s" style="white-space:normal"></div>`:`<div class="cr"><div>${songs.length} música(s)<small>${mb} MB neste aparelho</small></div>${isAdm()?`<button class="danger" data-c="wipe">${wipeArm?'Toque de novo para apagar tudo':'Apagar biblioteca'}</button>`:''}</div>`,
+ info:`<div class="cr"><div>Sonar<small>Versão ${APP_VERSION}</small></div></div><div class="cr"><div>Novidades<small>Integração com o Google Drive para músicas, capas e fotos de artistas</small></div></div><div class="cr"><div>Criador<small>eo_vinnyz</small></div></div><div class="cr"><div>Feito com<small>Claude, da Anthropic. Este app foi construído em conversa com ele.</small></div></div><div class="cr"><div>Dados<small>Tudo fica salvo neste aparelho</small></div></div>`};
  const title=cfgPage?CFGP.find(x=>x[0]===cfgPage)[1]:'Configurações e privacidade';
  $('#cf').innerHTML=`<div class="cfh"><button class="ic" data-c="back" aria-label="Voltar" style="transform:rotate(90deg)">${ico(I.dn)}</button><h2>${title}</h2></div>`+(cfgPage?P[cfgPage]:CFGP.map(([k,tt,s])=>`<button class="arow2" data-c="page" data-v="${k}"><div class="in"><div class="t">${tt}</div><div class="s">${s}</div></div></button>`).join(''));cfgFx()}
 function openCfg(){cfgPage=null;renderCfg();showEl('#cf','block')}
@@ -261,6 +267,8 @@ function closeCfg(){hideAnim('#cf');wipeArm=false;cfgPage=null}
 function wipeAll(){songs.forEach(s=>dbDel(s.id));songs=[];Object.keys(AR).forEach(adbDel);AR={};au.pause();queue=[];qi=-1;detail=null;player();closeNP();render()}
 $('#cf').addEventListener('click',e=>{
  const b=e.target.closest('button[data-c]');if(!b)return;const c=b.dataset.c,v=b.dataset.v;
+ if(c==='drefresh'){driveLoad().then(r=>{toast(r?'Biblioteca atualizada':'Não consegui atualizar: '+driveErr);render();renderCfg()});return}
+ if(c==='ddiag'){driveDiag();return}
  if(c==='back'){if(cfgPage){cfgPage=null;renderCfg()}else{closeCfg();openAcc('menu')}return}
  if(c==='page'){cfgPage=v;renderCfg();return}
  if(c==='toacc'){closeCfg();openAcc('profile');return}
@@ -280,7 +288,7 @@ $('#cf').addEventListener('change',e=>{
 applyCfg();
 const t0=Date.now();
 const LOGO=$('#sp img').src;
-const APP_VERSION='1.16.1';
+const APP_VERSION='1.17.0';
 const LOGO_W='assets/logo-word.webp';
 const LOGO_S='assets/logo-symbol.webp';
 const EQB='<i class="eqb"><b></b><b></b><b></b></i>';
@@ -296,13 +304,13 @@ if(!ACC.list.find(a=>a.id===ACC.cur))ACC.cur=ACC.list[0].id;
 let PROF=ACC.list.find(a=>a.id===ACC.cur);
 const socKey=id=>id==='a1'?'sonar-soc':'sonar-soc-'+id;
 try{ORD=JSON.parse(localStorage.getItem('sonar-ord')||'null')||JSON.parse(localStorage.getItem('sonar-soc')||'{}').ord||{}}catch(e){ORD={}}
-const ordSave=()=>{try{localStorage.setItem('sonar-ord',JSON.stringify(ORD))}catch(e){}};
+const ordSave=()=>{if(driveOn()){if(driveAdmin)catMark();return}try{localStorage.setItem('sonar-ord',JSON.stringify(ORD))}catch(e){}};
 function loadSoc(){let s={};try{s=JSON.parse(localStorage.getItem(socKey(ACC.cur))||'{}')}catch(e){}Object.keys(SOC).forEach(k=>{delete SOC[k]});Object.assign(SOC,SOCD(),s);delete SOC.ord}
 loadSoc();
 const socSave=()=>{try{localStorage.setItem(socKey(ACC.cur),JSON.stringify(SOC))}catch(e){}};
 const profSave=()=>{try{localStorage.setItem('sonar-accs',JSON.stringify(ACC))}catch(e){}};
 const ADMINS=['eo_vinnyz'];
-const isAdm=()=>ADMINS.includes((PROF.name||'').trim().toLowerCase());
+const isAdm=()=>driveOn()?driveAdmin:ADMINS.includes((PROF.name||'').trim().toLowerCase());
 const avBtn=()=>`<button class="av" data-a="prof" aria-label="Perfil">${PROF.photo?`<img class="avi" src="${PROF.photo}" alt="">`:esc(((PROF.name||'S')[0]).toUpperCase())}</button>`;
 const upBtn=()=>isAdm()?`<button class="ic" data-a="chip" data-k="upload" aria-label="Upload">${ico(I.up)}</button>`:'';
 function renderProf(){
@@ -399,7 +407,7 @@ const avImg=(p,sz)=>`<span class="av" style="width:${sz}px;height:${sz}px;displa
 function openAcc(p){accPage=p||'menu';renderAcc();showEl('#pf','flex')}
 function closeAcc(){hideAnim('#pf')}
 function accBack(){if(accPage!=='menu'){accPage='menu';renderAcc()}else closeAcc()}
-function switchAcc(id){ACC.cur=id;try{localStorage.setItem('sonar-session',id)}catch(e){}PROF=ACC.list.find(a=>a.id===id);loadSoc();profSave();tab='home';nav='home';detail=null;side='rec';render();renderAcc();toast('Conta: '+(PROF.name||'sem nome'))}
+function switchAcc(id){GTOK=null;driveAdmin=false;try{sessionStorage.removeItem('sonar-gtok')}catch(e){}ACC.cur=id;try{localStorage.setItem('sonar-session',id)}catch(e){}PROF=ACC.list.find(a=>a.id===id);loadSoc();profSave();tab='home';nav='home';detail=null;side='rec';render();renderAcc();toast('Conta: '+(PROF.name||'sem nome'))}
 function addAcc(){const n=($('#anew').value||'').trim();if(!n)return;const a={id:'a'+Date.now(),name:n,photo:''};ACC.list.push(a);switchAcc(a.id)}
 function delAcc(id){if(id===ACC.cur||ACC.list.length<2)return;ACC.list=ACC.list.filter(a=>a.id!==id);try{localStorage.removeItem(socKey(id))}catch(e){}profSave();renderAcc()}
 function capsule(){
@@ -411,7 +419,7 @@ function renderAcc(){
  const unread=SOC.notes.filter(n=>!n.read).length;let b='',title='Conta',markRead=false;
  const row=(ic,tt,s,a,v,bd)=>`<button class="arow2" data-a="${a}" data-v="${v||''}">${ico(I[ic])}<div class="in"><div class="t">${tt}</div>${s?`<div class="s">${s}</div>`:''}</div>${bd?`<i class="bdg2">${bd}</i>`:''}</button>`;
  if(accPage==='menu'){
-  b=`<button class="prow" data-a="accgo" data-v="profile">${avImg(PROF,72)}<div><div class="nm">${esc(PROF.name||'Sem nome')}</div><div class="s">Ver perfil</div></div></button>`+row('padd','Adicionar conta','Adicionar outra pessoa neste aparelho','accgo','accounts')+row('chart','Sua Cápsula sonora','Seu resumo de músicas e artistas','accgo','capsule')+row('hist','Recentes','O que você tocou por último','accgo','recent')+row('mega','Suas atualizações','Avisos dos artistas que você segue','accgo','updates',unread||'')+row('mail','Mensagens','Converse com seus amigos','accgo','messages')+row('gear','Configurações e privacidade','Reprodução, tema, armazenamento','accset')+row('out','Sair','Voltar para a tela de login','accout')+`<div class="s sm" style="margin-top:24px">Sonar · versão ${APP_VERSION}</div>`}
+  b=`<button class="prow" data-a="accgo" data-v="profile">${avImg(PROF,72)}<div><div class="nm">${esc(PROF.name||'Sem nome')}</div><div class="s">Ver perfil</div></div></button>`+row('padd','Adicionar conta','Adicionar outra pessoa neste aparelho','accgo','accounts')+row('chart','Sua Cápsula sonora','Seu resumo de músicas e artistas','accgo','capsule')+row('hist','Recentes','O que você tocou por último','accgo','recent')+row('mega','Suas atualizações','Avisos dos artistas que você segue','accgo','updates',unread||'')+row('mail','Mensagens','Converse com seus amigos','accgo','messages')+(gShow()?row('cloud','Google Drive',gStatus(),'accgo','drive'):'')+row('gear','Configurações e privacidade','Reprodução, tema, armazenamento','accset')+row('out','Sair','Voltar para a tela de login','accout')+`<div class="s sm" style="margin-top:24px">Sonar · versão ${APP_VERSION}</div>`}
  else if(accPage==='profile'){title='Perfil';b=`<div class="cen"><button class="pav" data-a="pphoto" aria-label="Escolher foto">${PROF.photo?`<img src="${PROF.photo}" alt="">`:'<span>+<br>Foto</span>'}</button></div><label class="s">Nome de usuário</label><input id="pname" value="${esc(PROF.name)}" placeholder="Seu nome" autocomplete="off" autocapitalize="off"><button class="add" data-a="psave" style="margin-top:12px">Salvar</button><div class="s" id="pmsg" style="margin-top:12px">${isAdm()?'Conta de administrador: você pode editar e fazer uploads.':'Conta de ouvinte.'}</div>`}
  else if(accPage==='accounts'){title='Contas';b=ACC.list.map(a=>`<div class="row">${avImg(a,48)}<button class="in" data-a="accsw" data-v="${a.id}"><div class="t">${esc(a.name||'Sem nome')}</div><div class="s">${a.id===ACC.cur?'Conta atual':'Trocar para esta conta'} · ${ADMINS.includes((a.name||'').trim().toLowerCase())?'Administrador':'Ouvinte'}</div></button>${a.id!==ACC.cur&&ACC.list.length>1?`<button class="ic" data-a="accdel" data-v="${a.id}" aria-label="Remover conta">✕</button>`:''}</div>`).join('')+`<h3>Adicionar conta</h3><input id="anew" placeholder="Nome de usuário da nova conta" autocomplete="off" autocapitalize="off"><button class="add" data-a="accadd" style="margin-top:12px">Adicionar</button><div class="s sm" style="margin-top:12px">As contas ficam salvas neste aparelho. Cada uma tem seus próprios seguidos, curtidas e playlists.</div>`}
  else if(accPage==='capsule'){
@@ -424,6 +432,7 @@ function renderAcc(){
  else if(accPage==='updates'){
   title='Suas atualizações';markRead=true;
   b=SOC.notes.length?SOC.notes.map(n=>`<div class="nt${n.read?'':' un'}"><div>${esc(n.text)}</div><div class="s">${new Date(n.t).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</div></div>`).join('')+'<button class="pill" data-a="ncl">Limpar tudo</button>':'<div class="s" style="padding:20px 0">Sem novidades. Siga artistas para saber quando lançarem músicas.</div>'}
+ else if(accPage==='drive'){title='Google Drive';b=driveHtml()}
  else{title='Mensagens';b='<p>Em breve você vai poder conversar com os amigos que seguem você.</p><div class="s">As mensagens precisam da conta na nuvem (Supabase). Quando ela estiver ligada, esta tela passa a funcionar.</div><button class="pill" disabled>Nova mensagem</button>'}
  $('#pf').innerHTML=`<div class="cfh" style="padding:calc(10px + env(safe-area-inset-top,0px)) 16px 0"><button class="ic" data-a="pfx" aria-label="Voltar" style="font-size:28px">‹</button><h2>${title}</h2></div><div class="accb">${b}</div>`;
  if(lastAcc!==accPage){const ab=$('#pf .accb');if(ab)ab.classList.add(accPage==='menu'?'swb':'swf');lastAcc=accPage}
@@ -431,7 +440,7 @@ function renderAcc(){
 function pageName(){
  const vis=id=>{const e=$(id);return !!e&&e.style.display!==''&&e.style.display!=='none'};
  if(document.documentElement.classList.contains('gout'))return'Entrar';if(vis('#cf'))return cfgPage?(CFGP.find(x=>x[0]===cfgPage)||[])[1]||'Configurações':'Configurações';
- if(vis('#pf'))return({menu:'Conta',profile:'Perfil',accounts:'Contas',capsule:'Cápsula sonora',recent:'Recentes',updates:'Atualizações',messages:'Mensagens'})[accPage]||'Conta';
+ if(vis('#pf'))return({menu:'Conta',profile:'Perfil',accounts:'Contas',capsule:'Cápsula sonora',recent:'Recentes',updates:'Atualizações',messages:'Mensagens',drive:'Google Drive'})[accPage]||'Conta';
  if(npOpen)return'Tocando agora';
  if(nav==='search')return'Buscar';
  if(detail&&detail.t==='tape')return((tapeById(detail.k)||{}).name||'SonarTape');if(detail)return detail.t==='list'?(detail.k==='fav'?'Favoritos':((SOC.lists.find(l=>l.id===detail.k)||{}).name||'Playlist')):detail.k;
@@ -461,6 +470,150 @@ function tapeMore(){
  const add=drawTape(x.ids,20),start=TL.length,se=$('#tsent');if(!se)return;TL.push(...add);
  se.insertAdjacentHTML('beforebegin',add.map((s,i)=>songRow(s,start+i,false,true).replace('class="row','class="row new')).join(''));
  if(tobs){tobs.unobserve(se);tobs.observe(se)}}
+const DCFG=Object.assign({site:'',clientId:'',apiKey:'',catalogId:'',folderId:''},window.SONAR_CONFIG||{});
+try{const o=JSON.parse(localStorage.getItem('sonar-drivecfg')||'{}');if(o.catalogId&&!DCFG.catalogId){DCFG.catalogId=o.catalogId;DCFG.folderId=o.folderId||''}}catch(e){}
+const drvHere=()=>!!(DCFG.clientId&&DCFG.apiKey&&(location.origin===DCFG.site||localStorage.getItem('sonar-forcedrive')==='1'));
+const driveOn=()=>drvHere()&&!!DCFG.catalogId;
+const driveSetupMode=()=>drvHere()&&!DCFG.catalogId;
+let driveAdmin=false,GTOK=null,GEXP=0,gClient=null,gCb={},catDirty=false,catSaving=false,driveErr='',catT=0,setupResult=null;
+const GAPI='https://www.googleapis.com/drive/v3',GUP='https://www.googleapis.com/upload/drive/v3';
+const mediaUrl=id=>id?GAPI+'/files/'+id+'?alt=media&key='+DCFG.apiKey:'';
+const extOf=f=>(String(f.name||'').match(/\.[^.]+$/)||['.mp3'])[0];
+const dataBlob=u=>{const m=u.match(/^data:(.*?);base64,(.*)$/);const bin=atob(m[2]),a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:m[1]})};
+const gisReady=()=>typeof google!=='undefined'&&google.accounts&&google.accounts.oauth2;
+function gToken(){
+ return new Promise((res,rej)=>{
+  if(GTOK&&Date.now()<GEXP-60000)return res(GTOK);
+  if(!gisReady())return rej(new Error('O login do Google não carregou. Verifique a internet.'));
+  if(!gClient)gClient=google.accounts.oauth2.initTokenClient({client_id:DCFG.clientId,scope:'https://www.googleapis.com/auth/drive.file',callback:r=>{if(r.error)return gCb.rej(new Error(r.error_description||r.error));GTOK=r.access_token;GEXP=Date.now()+(r.expires_in||3600)*1000;try{sessionStorage.setItem('sonar-gtok',JSON.stringify({t:GTOK,e:GEXP}))}catch(e){}gCb.res(GTOK)},error_callback:e=>gCb.rej(new Error(e&&e.type==='popup_closed'?'Login cancelado.':'Não foi possível abrir o login do Google ('+((e&&e.type)||'erro')+').'))});
+  gCb={res,rej};gClient.requestAccessToken()})}
+function warm(){if(driveOn()&&driveAdmin)gToken().catch(()=>{})}
+async function gfetch(url,opt={}){
+ const t=await gToken(),r=await fetch(url,{...opt,headers:{...(opt.headers||{}),Authorization:'Bearer '+t}});
+ if(!r.ok){let m='';try{m=(await r.json()).error.message}catch(e){}throw new Error('Drive '+r.status+(m?': '+m:''))}
+ return r}
+const jpost=(url,body,method)=>gfetch(url,{method:method||'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+async function driveCheckAdmin(){
+ try{const j=await(await gfetch(GAPI+'/files/'+DCFG.catalogId+'?fields=capabilities(canEdit)')).json();driveAdmin=!!(j.capabilities&&j.capabilities.canEdit)}catch(e){driveAdmin=false;driveErr=e.message}
+ render()}
+function applyCatalog(j){
+ songs=(j.songs||[]).map(s=>({...s,feats:s.feats||[],url:mediaUrl(s.fid),cover:s.cv?mediaUrl(s.cv):'',acover:s.acv?mediaUrl(s.acv):undefined,scover:s.scv?mediaUrl(s.scv):undefined,size:0}));
+ AR={};(j.artists||[]).forEach(a=>{AR[a.name]={name:a.name,bio:a.bio||'',verified:a.verified!==false,photo:a.pid?mediaUrl(a.pid):'',pid:a.pid||null}});
+ ORD=j.ord||{}}
+async function driveLoad(){
+ let j=null;
+ try{const r=await fetch(GAPI+'/files/'+DCFG.catalogId+'?alt=media&key='+DCFG.apiKey+'&t='+Date.now());if(!r.ok)throw new Error('HTTP '+r.status);j=await r.json();try{localStorage.setItem('sonar-catcache',JSON.stringify(j))}catch(e){}}
+ catch(e){driveErr=e.message;try{j=JSON.parse(localStorage.getItem('sonar-catcache')||'null')}catch(x){}if(!j)return false}
+ if(j.t&&j.t===catT&&songs.length)return 'same';
+ catT=j.t||0;applyCatalog(j);return 'new'}
+async function driveBoot(){
+ try{const o=JSON.parse(sessionStorage.getItem('sonar-gtok')||'null');if(o&&o.e>Date.now()+60000){GTOK=o.t;GEXP=o.e}}catch(e){}
+ const ok=await Promise.race([driveLoad(),new Promise(r=>setTimeout(()=>r(false),8000))]);
+ if(!ok)setTimeout(()=>toast('Sem conexão com o Drive.'),500);
+ if(GTOK&&ADMINS.includes((PROF.name||'').trim().toLowerCase()))driveCheckAdmin()}
+function driveSync(){if(!driveOn()||driveAdmin||catSaving||document.visibilityState!=='visible')return;driveLoad().then(r=>{if(r==='new')render()})}
+function catJson(){return{v:1,t:Date.now(),songs:songs.map(s=>({id:s.id,title:s.title,artist:s.artist,feats:s.feats||[],album:s.album,dur:s.dur||0,added:s.added||0,fid:s.fid,cv:s.cv||null,acv:s.acv||null,scv:s.scv||null,lyrics:s.lyrics||'',kind:s.kind||''})),artists:Object.values(AR).map(a=>({name:a.name,bio:a.bio||'',verified:a.verified!==false,pid:a.pid||null})),ord:ORD}}
+async function catSaveNow(){const j=catJson();await gfetch(GUP+'/files/'+DCFG.catalogId+'?uploadType=media',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(j)});catT=j.t;try{localStorage.setItem('sonar-catcache',JSON.stringify(j))}catch(e){}}
+function catMark(){if(!driveOn())return;catDirty=true;clearTimeout(catMark.t);catMark.t=setTimeout(catFlush,900)}
+async function catFlush(){
+ if(catSaving){catMark.t=setTimeout(catFlush,600);return}
+ if(!catDirty)return;catSaving=true;catDirty=false;
+ try{await catSaveNow()}catch(e){catDirty=true;toast('Não consegui salvar no Drive: '+e.message+' (abra Conta → Google Drive e entre de novo)')}
+ catSaving=false}
+function driveUpload(blob,name,mime,onp){
+ return new Promise(async(res,rej)=>{
+  try{
+   const t=await gToken(),b='sonarb'+Math.random().toString(36).slice(2),meta={name,parents:[DCFG.folderId]};
+   const body=new Blob(['--'+b+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify(meta)+'\r\n--'+b+'\r\nContent-Type: '+(mime||'application/octet-stream')+'\r\n\r\n',blob,'\r\n--'+b+'--']);
+   const x=new XMLHttpRequest();x.open('POST',GUP+'/files?uploadType=multipart&fields=id');
+   x.setRequestHeader('Authorization','Bearer '+t);x.setRequestHeader('Content-Type','multipart/related; boundary='+b);
+   if(onp&&x.upload)x.upload.onprogress=e=>{if(e.lengthComputable)onp(e.loaded/e.total)};
+   x.onload=async()=>{
+    if(x.status>=200&&x.status<300){const id=JSON.parse(x.responseText).id;try{await jpost(GAPI+'/files/'+id+'/permissions',{role:'reader',type:'anyone'})}catch(e){}res(id)}
+    else{let m='';try{m=JSON.parse(x.responseText).error.message}catch(e){}rej(new Error('Drive '+x.status+(m?': '+m:'')))}};
+   x.onerror=()=>rej(new Error('Falha de rede ao enviar para o Drive.'));x.send(body)
+  }catch(e){rej(e)}})}
+async function driveTrash(s){for(const id of[s.fid,s.cv,s.scv]){if(id)try{await jpost(GAPI+'/files/'+id,{trashed:true},'PATCH')}catch(e){}}}
+async function setAlbumCover(k,url){
+ if(!driveOn()){songs.filter(s=>s.album===k).forEach(s=>{s.acover=url;dbPut(s)});return}
+ const id=await driveUpload(dataBlob(url),'capa-'+Date.now()+'.jpg','image/jpeg');
+ songs.filter(s=>s.album===k).forEach(s=>{s.acv=id;s.acover=mediaUrl(id)});catMark()}
+async function setSongCover(sid,url){
+ const s=songs.find(x=>x.id===sid);if(!s)return;
+ if(!driveOn()){s.scover=url;dbPut(s);return}
+ const id=await driveUpload(dataBlob(url),'capa-'+Date.now()+'.jpg','image/jpeg');s.scv=id;s.scover=mediaUrl(id);catMark()}
+async function setArtistPhoto(n,url){
+ if(!driveOn()){const a={...art(n)};a.photo=url;AR[n]=a;adbPut(a);return}
+ const id=await driveUpload(dataBlob(url),'artista-'+Date.now()+'.jpg','image/jpeg'),a={...art(n)};a.photo=mediaUrl(id);a.pid=id;AR[n]=a;catMark()}
+async function driveSetup(){
+ await gToken();
+ const folder=await(await jpost(GAPI+'/files',{name:'Sonar',mimeType:'application/vnd.google-apps.folder'})).json();
+ await jpost(GAPI+'/files/'+folder.id+'/permissions',{role:'reader',type:'anyone'});
+ const cat=await(await jpost(GAPI+'/files',{name:'biblioteca.json',parents:[folder.id],mimeType:'application/json'})).json();
+ await gfetch(GUP+'/files/'+cat.id+'?uploadType=media',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({v:1,t:Date.now(),songs:[],artists:[],ord:{}})});
+ await jpost(GAPI+'/files/'+cat.id+'/permissions',{role:'reader',type:'anyone'});
+ DCFG.catalogId=cat.id;DCFG.folderId=folder.id;setupResult={catalogId:cat.id,folderId:folder.id};
+ try{localStorage.setItem('sonar-drivecfg',JSON.stringify(setupResult))}catch(e){}
+ driveAdmin=true;songs=[];AR={};ORD={};catT=0}
+async function createUpDrive(name,artist,T){
+ const upd=()=>{const m=$('#umsg');if(m)m.textContent=U.msg};
+ try{
+  await gToken();
+  const feats=U.feats.split(',').map(x=>x.trim()).filter(Boolean),n=U.n,base=Date.now(),added=[];
+  U.msg='Preparando envio...';renderUp();
+  let acv=null;if(U.cover)acv=await driveUpload(dataBlob(U.cover),'capa-'+base+'.jpg','image/jpeg');
+  for(let i=0;i<n;i++){
+   const f=U.files[i],tg=await readTags(f),dur=await getDur(f),emb=picUrl(tg.picture),lab='Enviando faixa '+(i+1)+' de '+n;
+   U.msg=lab+' (0%)...';upd();
+   const fid=await driveUpload(f,'faixa-'+base+'-'+(i+1)+extOf(f),f.type||'audio/mpeg',p=>{U.msg=lab+' ('+Math.round(p*100)+'%)...';upd()});
+   let cv=null;if(emb)cv=await driveUpload(dataBlob(emb),'embutida-'+base+'-'+(i+1)+'.jpg','image/jpeg').catch(()=>null);
+   const s={id:base+'-'+i+Math.random().toString(36).slice(2,6),title:(U.titles[i]||'').trim()||tg.title||f.name.replace(/\.[^.]+$/,''),artist,feats,album:name,dur,added:base-i,fid,cv,acv,scv:null,lyrics:'',kind:U.type,size:0};
+   s.url=mediaUrl(fid);s.cover=cv?mediaUrl(cv):'';s.acover=acv?mediaUrl(acv):undefined;songs.push(s);added.push(s)}
+  U.msg='Salvando o catálogo...';upd();
+  try{await catSaveNow()}catch(e){added.forEach(s=>{songs.splice(songs.indexOf(s),1)});throw e}
+  const l=T.l;if(S.notif!==false&&[artist,...feats].some(a=>SOC.follows.includes(a)))note('Novo lançamento de '+artist+': '+name+' ('+l+')');
+  U={type:null,n:0,name:'',artist:'',feats:'',cover:'',files:[],titles:[],msg:''};
+  tab='home';nav='home';detail={t:'album',k:name};scrollTo(0,0);render();
+  toast(l+' enviado ao Drive com '+n+' faixa(s)')
+ }catch(e){U.msg='Erro: '+e.message;renderUp()}}
+async function driveImportLocal(){
+ if(!driveOn()||!driveAdmin)return toast('Entre como administrador.');
+ const loc=await dbAll();let done=[];try{done=JSON.parse(localStorage.getItem('sonar-imported')||'[]')}catch(e){}
+ const todo=loc.filter(s=>s.file&&!done.includes(s.id));if(!todo.length)return toast('Nenhuma música local para enviar.');
+ await gToken();
+ for(let i=0;i<todo.length;i++){
+  const s=todo[i];toast('Enviando '+(i+1)+' de '+todo.length+'...');
+  try{
+   const fid=await driveUpload(s.file,'faixa-'+s.id+extOf(s.file),s.file.type||'audio/mpeg');
+   const up=async(u,nm)=>u&&String(u).startsWith('data:')?driveUpload(dataBlob(u),nm+'-'+s.id+'.jpg','image/jpeg').catch(()=>null):null;
+   const cv=await up(s.cover,'embutida'),acv=await up(s.acover,'album'),scv=await up(s.scover,'musica');
+   const n={id:s.id,title:s.title,artist:s.artist,feats:s.feats||[],album:s.album,dur:s.dur||0,added:s.added||0,fid,cv,acv,scv,lyrics:s.lyrics||'',kind:s.kind||'',size:0};
+   n.url=mediaUrl(fid);n.cover=cv?mediaUrl(cv):'';n.acover=acv?mediaUrl(acv):undefined;n.scover=scv?mediaUrl(scv):undefined;
+   songs.push(n);done.push(s.id);localStorage.setItem('sonar-imported',JSON.stringify(done))
+  }catch(e){toast('Falhou em "'+s.title+'": '+e.message);break}}
+ try{for(const a of await adbAll()){const pid=a.photo&&String(a.photo).startsWith('data:')?await driveUpload(dataBlob(a.photo),'artista-'+Date.now()+'.jpg','image/jpeg').catch(()=>null):null;AR[a.name]={...a,photo:pid?mediaUrl(pid):'',pid}}}catch(e){}
+ await catSaveNow().catch(e=>toast('Catálogo não salvo: '+e.message));toast('Importação concluída');render()}
+async function driveDiag(){
+ const out=[],add=(k,v)=>{out.push(k+': '+v);const m=$('#dmsg');if(m)m.innerHTML=out.map(esc).join('<br>')};
+ add('Origem',location.origin+(location.origin===DCFG.site?' (ok)':' (diferente de '+DCFG.site+')'));
+ add('Catálogo configurado',DCFG.catalogId?'sim':'não');
+ try{const r=await fetch(GAPI+'/files/'+DCFG.catalogId+'?alt=media&key='+DCFG.apiKey+'&t='+Date.now());add('Leitura com a chave de API',r.ok?'ok ('+r.status+')':'erro '+r.status);if(!r.ok){try{add('Detalhe',(await r.json()).error.message)}catch(e){}}}catch(e){add('Leitura com a chave de API','falhou: '+e.message)}
+ add('Script do login Google',gisReady()?'carregado':'não carregou');
+ add('Administrador',driveAdmin?'sim':'não')}
+function gShow(){return(driveOn()||driveSetupMode())&&ADMINS.includes((PROF.name||'').trim().toLowerCase())}
+const gStatus=()=>driveOn()?(driveAdmin?'Conectado como administrador':'Toque para entrar com o Google'):'Configuração pendente';
+function driveHtml(){
+ const signed=!!(GTOK&&Date.now()<GEXP);
+ let h='<p class="s" style="white-space:normal">As músicas, capas e fotos ficam no Google Drive. Só a conta Google dona da pasta consegue enviar ou editar; os ouvintes só escutam.</p>';
+ if(driveSetupMode())h+=signed?'<button class="add" data-a="gsetup" style="margin:10px 0">Configurar Drive (primeira vez)</button><div class="s" style="white-space:normal">Cria a pasta "Sonar" no seu Drive, deixa a leitura pública e prepara o catálogo.</div>':'<button class="add" data-a="gsign" style="margin:10px 0">Entrar com o Google</button>';
+ else if(driveOn()){
+  if(!driveAdmin)h+='<button class="add" data-a="gsign" style="margin:10px 0">Entrar com o Google</button><div class="s" style="white-space:normal">'+esc(driveErr)+'</div>';
+  else h+='<div class="cr"><div>Administrador conectado<small>'+songs.length+' música(s) no Drive</small></div></div><button class="pill" data-a="gimport">Enviar músicas locais para o Drive</button> <button class="pill" data-a="gout">Sair do Google</button>'}
+ if(DCFG.catalogId&&!(window.SONAR_CONFIG&&window.SONAR_CONFIG.catalogId))h+='<h3>Falta um passo</h3><p class="s" style="white-space:normal">Para os ouvintes verem a biblioteca, cole estas linhas no arquivo <b>config.js</b> no GitHub (no lugar de catalogId e folderId) e salve:</p><pre id="gcfg" class="gcfg">catalogId:\''+DCFG.catalogId+'\',\nfolderId:\''+DCFG.folderId+'\'</pre><button class="pill" data-a="gcopy">Copiar</button>';
+ return h}
+document.querySelector('head').insertAdjacentHTML('beforeend','<style>.gcfg{background:var(--bg2);padding:10px;border-radius:10px;overflow:auto;font-size:12px;white-space:pre-wrap;word-break:break-all}</style>');
+au.addEventListener('error',()=>{if(au.crossOrigin&&au.dataset.u&&!au.dataset.retry&&au.src===au.dataset.u){au.dataset.retry='1';au.crossOrigin=null;au.src=au.dataset.u;au.play().catch(()=>{})}});
+
 let DEV=null,lastSide=''
 ,lastPK='',lastDet=false,lastCur='',lastHad=false,lastAcc='',lastCfg='',lastNpId=null,pops=[];
 function showEl(id,disp){const e=$(id);e._t=(e._t||0)+1;e.classList.remove('out');e.style.display=disp}
@@ -629,7 +782,7 @@ function doLogin(){
  try{localStorage.setItem('sonar-session',a.id);localStorage.setItem('sonar-lastuser',a.name)}catch(x){}
  g.classList.add('lg-out');
  setTimeout(()=>{freshSplash();setTimeout(()=>{H.classList.remove('gout');tab='home';nav='home';detail=null;side='rec';barMode='nav';render();g.hidden=true;g.classList.remove('lg-out');hideBarSplash(()=>toast('Bem-vindo, '+a.name))},2000)},450)}
-function logout(){
+function logout(){GTOK=null;driveAdmin=false;try{sessionStorage.removeItem('sonar-gtok')}catch(e){}
  try{localStorage.removeItem('sonar-session')}catch(e){}
  au.pause();queue=[];qi=-1;tapeSrc=null;DEV=null;barMode='nav';closeNP();closeAcc();closeCfg();closeSheet();
  setTimeout(()=>{H.classList.add('gout');detail=null;tab='home';nav='home';render();showLogin()},300)}
@@ -644,5 +797,9 @@ $('#lgb').onclick=doLogin;
 $('#lgu').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();doLogin()}});
 $('#lgu').addEventListener('input',()=>{$('#lge').textContent=''});
 wireGate();
-(async()=>{db=await openDB();songs=await dbAll();(await adbAll()).forEach(a=>{AR[a.name]=a});render();bootFlow()})();
+(async()=>{db=await openDB();
+ if(driveOn()){songs=[];AR={};ORD={};await driveBoot()}else{songs=await dbAll();(await adbAll()).forEach(a=>{AR[a.name]=a})}
+ render();bootFlow()})();
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')driveSync()});
+setInterval(driveSync,180000);
 setTimeout(bootFlow,5000);
