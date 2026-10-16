@@ -39,7 +39,7 @@ function songRow(s,i,num,hl){
 const albumCard=(k,l)=>`<button class="card" data-a="open" data-t="album" data-k="${esc(k)}">${cov(l,k)}<div class="t">${esc(k)}</div><div class="s sm">${aph(l[0].artist).replace('class="cv"','class="mini"')}${esc(l[0].artist)}${vb(l[0].artist)} · ${aType(l.length)}</div></button>`;
 function play(i){
  const s=songs.find(x=>x.id===queue[i]);if(!s)return;
- qi=i;barMode='mini';SOC.plays=SOC.plays||{};SOC.plays[s.id]=(SOC.plays[s.id]||0)+1;SOC.recent=[s.id,...(SOC.recent||[]).filter(x=>x!==s.id)].slice(0,30);socSave();if(cur)URL.revokeObjectURL(cur);au.dataset.retry='';if(s.file){au.crossOrigin=null;cur=URL.createObjectURL(s.file);au.src=cur}else{cur=null;au.crossOrigin='anonymous';au.dataset.u=s.url||'';au.src=s.url}au.playbackRate=S.speed||1;graph();au.play().catch(()=>{});
+ qi=i;barMode='mini';SOC.plays=SOC.plays||{};SOC.plays[s.id]=(SOC.plays[s.id]||0)+1;SOC.recent=[s.id,...(SOC.recent||[]).filter(x=>x!==s.id)].slice(0,30);socSave();if(cur)URL.revokeObjectURL(cur);au.dataset.retry='';au.dataset.rl='';playTok++;clearTimeout(audioWarm.t);if(s.file){au.crossOrigin=null;cur=URL.createObjectURL(s.file);au.src=cur}else if(s.fid&&AUC.has(s.fid)){const tk=playTok;cur=null;au.crossOrigin=null;au.removeAttribute('src');audioGet(s.fid).then(u=>{if(tk!==playTok)return;if(u){cur=u;au.src=u}else{au.crossOrigin='anonymous';au.dataset.u=s.url||'';au.src=s.url}au.playbackRate=S.speed||1;au.play().catch(()=>{})})}else{cur=null;au.crossOrigin='anonymous';au.dataset.u=s.url||'';au.src=s.url;audioWarm(s)}au.playbackRate=S.speed||1;graph();au.play().catch(()=>{});
  try{navigator.mediaSession.metadata=new MediaMetadata({title:s.title,artist:s.artist,album:s.album,artwork:sc(s)?[{src:sc(s)}]:[]})}catch(e){}
  player();render();if(npOpen)renderNP()}
 function startQ(ids,i){queue=ids;tapeSrc=(detail&&detail.t==='tape')?detail.k:null;play(i)}
@@ -259,7 +259,7 @@ function renderCfg(){
  bib:`<div class="cr"><div>Ordenar músicas por</div>${sel('sort',S.sort,[['title','Título'],['artist','Artista'],['recent','Mais recentes']])}</div><div class="cr"><div>Mostrar selo de verificado</div>${sw('badge',S.badge)}</div><div class="cr"><div>Tamanho da letra</div>${sel('lyr',S.lyr,[[18,'Pequena'],[22,'Média'],[28,'Grande']])}</div>`,
  notif:`<div class="cr"><div>Lançamentos de quem você segue<small>Avisar no sino quando sair música nova</small></div>${sw('notif',S.notif!==false)}</div>`,
  arm:driveOn()||driveSetupMode()?`<div class="cr"><div>Google Drive<small>${driveOn()?(driveAdmin?'Administrador conectado':'Modo ouvinte (somente leitura)'):'Configuração pendente'}</small></div></div><div class="cr"><div>${songs.length} música(s)<small>Biblioteca carregada do Drive</small></div><button class="pill" data-c="drefresh">Atualizar</button></div><div class="cr"><div>Testar conexão<small>Mostra o motivo de qualquer erro</small></div><button class="pill" data-c="ddiag">Testar</button></div><div id="dmsg" class="s" style="white-space:normal"></div>`:`<div class="cr"><div>${songs.length} música(s)<small>${mb} MB neste aparelho</small></div>${isAdm()?`<button class="danger" data-c="wipe">${wipeArm?'Toque de novo para apagar tudo':'Apagar biblioteca'}</button>`:''}</div>`,
- info:`<div class="cr"><div>Sonar<small>Versão ${APP_VERSION}</small></div></div><div class="cr"><div>Novidades<small>Integração com o Google Drive para músicas, capas e fotos de artistas</small></div></div><div class="cr"><div>Criador<small>eo_vinnyz</small></div></div><div class="cr"><div>Feito com<small>Claude, da Anthropic. Este app foi construído em conversa com ele.</small></div></div><div class="cr"><div>Dados<small>Tudo fica salvo neste aparelho</small></div></div>`};
+ info:`<div class="cr"><div>Sonar<small>Versão ${APP_VERSION}</small></div></div><div class="cr"><div>Novidades<small>Cache de capas e músicas no aparelho: menos pedidos ao Google, início mais rápido</small></div></div><div class="cr"><div>Criador<small>eo_vinnyz</small></div></div><div class="cr"><div>Feito com<small>Claude, da Anthropic. Este app foi construído em conversa com ele.</small></div></div><div class="cr"><div>Dados<small>Tudo fica salvo neste aparelho</small></div></div>`};
  const title=cfgPage?CFGP.find(x=>x[0]===cfgPage)[1]:'Configurações e privacidade';
  $('#cf').innerHTML=`<div class="cfh"><button class="ic" data-c="back" aria-label="Voltar" style="transform:rotate(90deg)">${ico(I.dn)}</button><h2>${title}</h2></div>`+(cfgPage?P[cfgPage]:CFGP.map(([k,tt,s])=>`<button class="arow2" data-c="page" data-v="${k}"><div class="in"><div class="t">${tt}</div><div class="s">${s}</div></div></button>`).join(''));cfgFx()}
 function openCfg(){cfgPage=null;renderCfg();showEl('#cf','block')}
@@ -288,7 +288,7 @@ $('#cf').addEventListener('change',e=>{
 applyCfg();
 const t0=Date.now();
 const LOGO=$('#sp img').src;
-const APP_VERSION='1.17.0';
+const APP_VERSION='1.18.0';
 const LOGO_W='assets/logo-word.webp';
 const LOGO_S='assets/logo-symbol.webp';
 const EQB='<i class="eqb"><b></b><b></b><b></b></i>';
@@ -478,6 +478,29 @@ const driveSetupMode=()=>drvHere()&&!DCFG.catalogId;
 let driveAdmin=false,GTOK=null,GEXP=0,gClient=null,gCb={},catDirty=false,catSaving=false,driveErr='',catT=0,setupResult=null;
 const GAPI='https://www.googleapis.com/drive/v3',GUP='https://www.googleapis.com/upload/drive/v3';
 const mediaUrl=id=>id?GAPI+'/files/'+id+'?alt=media&key='+DCFG.apiKey:'';
+
+/* ===== Cache local (capas + músicas) para não estourar o limite do Google ===== */
+const IMN='sonar-img-v1',AUN='sonar-audio-v1',AUMAX=80,IMC=new Map(),IMQ=[],IMB=new Set(),AUC=new Set();let imAct=0,playTok=0,lastDL=0;
+const IK=id=>'https://sonar.local/i?f='+id,AK=id=>'https://sonar.local/a?f='+id;
+function imgSrc(id){if(!id)return'';if(IMC.has(id))return IMC.get(id);if(!IMB.has(id)){IMB.add(id);IMQ.push({id,n:0});imgPump()}return''}
+function imgPump(){while(imAct<4&&IMQ.length){const j=IMQ.shift();imAct++;imgLoad(j).finally(()=>{imAct--;imgPump()})}}
+async function imgLoad(j){
+ try{
+  let c=null,r=null;try{c=await caches.open(IMN);r=await c.match(IK(j.id))}catch(e){}
+  if(!r){r=await fetch(mediaUrl(j.id));if(!r.ok)throw new Error('HTTP '+r.status);if(c)try{await c.put(IK(j.id),r.clone())}catch(e){}}
+  IMC.set(j.id,URL.createObjectURL(await r.blob()));imgDone()
+ }catch(e){if(j.n<5){const w=[3000,8000,20000,45000,90000][j.n++];setTimeout(()=>{IMQ.push(j);imgPump()},w)}else IMB.delete(j.id)}}
+function imgRefresh(){songs.forEach(s=>{if(s.cv&&IMC.has(s.cv))s.cover=IMC.get(s.cv);if(s.acv&&IMC.has(s.acv))s.acover=IMC.get(s.acv);if(s.scv&&IMC.has(s.scv))s.scover=IMC.get(s.scv)});Object.values(AR).forEach(a=>{if(a.pid&&IMC.has(a.pid))a.photo=IMC.get(a.pid)})}
+function imgDone(){if(imgDone.t)return;imgDone.t=setTimeout(function f(){const a=document.activeElement;if(a&&/INPUT|TEXTAREA/.test(a.tagName)){imgDone.t=setTimeout(f,1500);return}imgDone.t=0;imgRefresh();render();if(npOpen)renderNP()},600)}
+async function audioInit(){try{const c=await caches.open(AUN);(await c.keys()).forEach(r=>AUC.add(new URL(r.url).searchParams.get('f')))}catch(e){}}
+async function audioGet(f){try{const c=await caches.open(AUN),r=await c.match(AK(f));return r?URL.createObjectURL(await r.blob()):null}catch(e){return null}}
+function audioWarm(s){
+ clearTimeout(audioWarm.t);if(!s.fid||AUC.has(s.fid))return;
+ audioWarm.t=setTimeout(async()=>{
+  if(queue[qi]!==s.id||AUC.has(s.fid)||au.paused)return;
+  try{const c=await caches.open(AUN),r=await fetch(s.url);if(!r.ok)return;await c.put(AK(s.fid),r);AUC.add(s.fid);
+   const ks=await c.keys();if(ks.length>AUMAX){const o=ks[0];AUC.delete(new URL(o.url).searchParams.get('f'));await c.delete(o)}}catch(e){}},10000)}
+audioInit();
 const extOf=f=>(String(f.name||'').match(/\.[^.]+$/)||['.mp3'])[0];
 const dataBlob=u=>{const m=u.match(/^data:(.*?);base64,(.*)$/);const bin=atob(m[2]),a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:m[1]})};
 const gisReady=()=>typeof google!=='undefined'&&google.accounts&&google.accounts.oauth2;
@@ -497,21 +520,21 @@ async function driveCheckAdmin(){
  try{const j=await(await gfetch(GAPI+'/files/'+DCFG.catalogId+'?fields=capabilities(canEdit)')).json();driveAdmin=!!(j.capabilities&&j.capabilities.canEdit)}catch(e){driveAdmin=false;driveErr=e.message}
  render()}
 function applyCatalog(j){
- songs=(j.songs||[]).map(s=>({...s,feats:s.feats||[],url:mediaUrl(s.fid),cover:s.cv?mediaUrl(s.cv):'',acover:s.acv?mediaUrl(s.acv):undefined,scover:s.scv?mediaUrl(s.scv):undefined,size:0}));
- AR={};(j.artists||[]).forEach(a=>{AR[a.name]={name:a.name,bio:a.bio||'',verified:a.verified!==false,photo:a.pid?mediaUrl(a.pid):'',pid:a.pid||null}});
+ songs=(j.songs||[]).map(s=>({...s,feats:s.feats||[],url:mediaUrl(s.fid),cover:imgSrc(s.cv),acover:s.acv?imgSrc(s.acv):undefined,scover:s.scv?imgSrc(s.scv):undefined,size:0}));
+ AR={};(j.artists||[]).forEach(a=>{AR[a.name]={name:a.name,bio:a.bio||'',verified:a.verified!==false,photo:imgSrc(a.pid),pid:a.pid||null}});
  ORD=j.ord||{}}
 async function driveLoad(){
  let j=null;
  try{const r=await fetch(GAPI+'/files/'+DCFG.catalogId+'?alt=media&key='+DCFG.apiKey+'&t='+Date.now());if(!r.ok)throw new Error('HTTP '+r.status);j=await r.json();try{localStorage.setItem('sonar-catcache',JSON.stringify(j))}catch(e){}}
  catch(e){driveErr=e.message;try{j=JSON.parse(localStorage.getItem('sonar-catcache')||'null')}catch(x){}if(!j)return false}
  if(j.t&&j.t===catT&&songs.length)return 'same';
- catT=j.t||0;applyCatalog(j);return 'new'}
+ lastDL=Date.now();catT=j.t||0;applyCatalog(j);return 'new'}
 async function driveBoot(){
  try{const o=JSON.parse(sessionStorage.getItem('sonar-gtok')||'null');if(o&&o.e>Date.now()+60000){GTOK=o.t;GEXP=o.e}}catch(e){}
  const ok=await Promise.race([driveLoad(),new Promise(r=>setTimeout(()=>r(false),8000))]);
  if(!ok)setTimeout(()=>toast('Sem conexão com o Drive.'),500);
  if(GTOK&&ADMINS.includes((PROF.name||'').trim().toLowerCase()))driveCheckAdmin()}
-function driveSync(){if(!driveOn()||driveAdmin||catSaving||document.visibilityState!=='visible')return;driveLoad().then(r=>{if(r==='new')render()})}
+function driveSync(){if(!driveOn()||driveAdmin||catSaving||document.visibilityState!=='visible'||Date.now()-lastDL<300000)return;driveLoad().then(r=>{if(r==='new')render()})}
 function catJson(){return{v:1,t:Date.now(),songs:songs.map(s=>({id:s.id,title:s.title,artist:s.artist,feats:s.feats||[],album:s.album,dur:s.dur||0,added:s.added||0,fid:s.fid,cv:s.cv||null,acv:s.acv||null,scv:s.scv||null,lyrics:s.lyrics||'',kind:s.kind||''})),artists:Object.values(AR).map(a=>({name:a.name,bio:a.bio||'',verified:a.verified!==false,pid:a.pid||null})),ord:ORD}}
 async function catSaveNow(){const j=catJson();await gfetch(GUP+'/files/'+DCFG.catalogId+'?uploadType=media',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(j)});catT=j.t;try{localStorage.setItem('sonar-catcache',JSON.stringify(j))}catch(e){}}
 function catMark(){if(!driveOn())return;catDirty=true;clearTimeout(catMark.t);catMark.t=setTimeout(catFlush,900)}
@@ -537,14 +560,14 @@ async function driveTrash(s){for(const id of[s.fid,s.cv,s.scv]){if(id)try{await 
 async function setAlbumCover(k,url){
  if(!driveOn()){songs.filter(s=>s.album===k).forEach(s=>{s.acover=url;dbPut(s)});return}
  const id=await driveUpload(dataBlob(url),'capa-'+Date.now()+'.jpg','image/jpeg');
- songs.filter(s=>s.album===k).forEach(s=>{s.acv=id;s.acover=mediaUrl(id)});catMark()}
+ songs.filter(s=>s.album===k).forEach(s=>{s.acv=id;IMC.set(id,url);s.acover=url});catMark()}
 async function setSongCover(sid,url){
  const s=songs.find(x=>x.id===sid);if(!s)return;
  if(!driveOn()){s.scover=url;dbPut(s);return}
- const id=await driveUpload(dataBlob(url),'capa-'+Date.now()+'.jpg','image/jpeg');s.scv=id;s.scover=mediaUrl(id);catMark()}
+ const id=await driveUpload(dataBlob(url),'capa-'+Date.now()+'.jpg','image/jpeg');s.scv=id;IMC.set(id,url);s.scover=url;catMark()}
 async function setArtistPhoto(n,url){
  if(!driveOn()){const a={...art(n)};a.photo=url;AR[n]=a;adbPut(a);return}
- const id=await driveUpload(dataBlob(url),'artista-'+Date.now()+'.jpg','image/jpeg'),a={...art(n)};a.photo=mediaUrl(id);a.pid=id;AR[n]=a;catMark()}
+ const id=await driveUpload(dataBlob(url),'artista-'+Date.now()+'.jpg','image/jpeg'),a={...art(n)};IMC.set(id,url);a.photo=url;a.pid=id;AR[n]=a;catMark()}
 async function driveSetup(){
  await gToken();
  const folder=await(await jpost(GAPI+'/files',{name:'Sonar',mimeType:'application/vnd.google-apps.folder'})).json();
@@ -568,7 +591,7 @@ async function createUpDrive(name,artist,T){
    const fid=await driveUpload(f,'faixa-'+base+'-'+(i+1)+extOf(f),f.type||'audio/mpeg',p=>{U.msg=lab+' ('+Math.round(p*100)+'%)...';upd()});
    let cv=null;if(emb)cv=await driveUpload(dataBlob(emb),'embutida-'+base+'-'+(i+1)+'.jpg','image/jpeg').catch(()=>null);
    const s={id:base+'-'+i+Math.random().toString(36).slice(2,6),title:(U.titles[i]||'').trim()||tg.title||f.name.replace(/\.[^.]+$/,''),artist,feats,album:name,dur,added:base-i,fid,cv,acv,scv:null,lyrics:'',kind:U.type,size:0};
-   s.url=mediaUrl(fid);s.cover=cv?mediaUrl(cv):'';s.acover=acv?mediaUrl(acv):undefined;songs.push(s);added.push(s)}
+   s.url=mediaUrl(fid);if(cv&&emb)IMC.set(cv,emb);if(acv&&U.cover)IMC.set(acv,U.cover);s.cover=imgSrc(cv);s.acover=acv?imgSrc(acv):undefined;songs.push(s);added.push(s)}
   U.msg='Salvando o catálogo...';upd();
   try{await catSaveNow()}catch(e){added.forEach(s=>{songs.splice(songs.indexOf(s),1)});throw e}
   const l=T.l;if(S.notif!==false&&[artist,...feats].some(a=>SOC.follows.includes(a)))note('Novo lançamento de '+artist+': '+name+' ('+l+')');
@@ -588,7 +611,7 @@ async function driveImportLocal(){
    const up=async(u,nm)=>u&&String(u).startsWith('data:')?driveUpload(dataBlob(u),nm+'-'+s.id+'.jpg','image/jpeg').catch(()=>null):null;
    const cv=await up(s.cover,'embutida'),acv=await up(s.acover,'album'),scv=await up(s.scover,'musica');
    const n={id:s.id,title:s.title,artist:s.artist,feats:s.feats||[],album:s.album,dur:s.dur||0,added:s.added||0,fid,cv,acv,scv,lyrics:s.lyrics||'',kind:s.kind||'',size:0};
-   n.url=mediaUrl(fid);n.cover=cv?mediaUrl(cv):'';n.acover=acv?mediaUrl(acv):undefined;n.scover=scv?mediaUrl(scv):undefined;
+   if(cv)IMC.set(cv,s.cover);if(acv)IMC.set(acv,s.acover);if(scv)IMC.set(scv,s.scover);n.url=mediaUrl(fid);n.cover=imgSrc(cv);n.acover=acv?imgSrc(acv):undefined;n.scover=scv?imgSrc(scv):undefined;
    songs.push(n);done.push(s.id);localStorage.setItem('sonar-imported',JSON.stringify(done))
   }catch(e){toast('Falhou em "'+s.title+'": '+e.message);break}}
  try{for(const a of await adbAll()){const pid=a.photo&&String(a.photo).startsWith('data:')?await driveUpload(dataBlob(a.photo),'artista-'+Date.now()+'.jpg','image/jpeg').catch(()=>null):null;AR[a.name]={...a,photo:pid?mediaUrl(pid):'',pid}}}catch(e){}
@@ -612,7 +635,7 @@ function driveHtml(){
  if(DCFG.catalogId&&!(window.SONAR_CONFIG&&window.SONAR_CONFIG.catalogId))h+='<h3>Falta um passo</h3><p class="s" style="white-space:normal">Para os ouvintes verem a biblioteca, cole estas linhas no arquivo <b>config.js</b> no GitHub (no lugar de catalogId e folderId) e salve:</p><pre id="gcfg" class="gcfg">catalogId:\''+DCFG.catalogId+'\',\nfolderId:\''+DCFG.folderId+'\'</pre><button class="pill" data-a="gcopy">Copiar</button>';
  return h}
 document.querySelector('head').insertAdjacentHTML('beforeend','<style>.gcfg{background:var(--bg2);padding:10px;border-radius:10px;overflow:auto;font-size:12px;white-space:pre-wrap;word-break:break-all}</style>');
-au.addEventListener('error',()=>{if(au.crossOrigin&&au.dataset.u&&!au.dataset.retry&&au.src===au.dataset.u){au.dataset.retry='1';au.crossOrigin=null;au.src=au.dataset.u;au.play().catch(()=>{})}});
+au.addEventListener('error',()=>{if(au.dataset.retry==='1'&&!au.dataset.rl&&au.dataset.u){au.dataset.rl='1';toast('O Google limitou os acessos. Tentando de novo em instantes…');setTimeout(()=>{if(au.dataset.u&&au.src===au.dataset.u){au.crossOrigin='anonymous';au.load();au.play().catch(()=>{})}},8000)}if(au.crossOrigin&&au.dataset.u&&!au.dataset.retry&&au.src===au.dataset.u){au.dataset.retry='1';au.crossOrigin=null;au.src=au.dataset.u;au.play().catch(()=>{})}});
 
 let DEV=null,lastSide=''
 ,lastPK='',lastDet=false,lastCur='',lastHad=false,lastAcc='',lastCfg='',lastNpId=null,pops=[];
@@ -801,5 +824,5 @@ wireGate();
  if(driveOn()){songs=[];AR={};ORD={};await driveBoot()}else{songs=await dbAll();(await adbAll()).forEach(a=>{AR[a.name]=a})}
  render();bootFlow()})();
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')driveSync()});
-setInterval(driveSync,180000);
+setInterval(driveSync,600000);
 setTimeout(bootFlow,5000);
