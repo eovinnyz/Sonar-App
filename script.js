@@ -39,7 +39,7 @@ function songRow(s,i,num,hl){
 const albumCard=(k,l)=>`<button class="card" data-a="open" data-t="album" data-k="${esc(k)}">${cov(l,k)}<div class="t">${esc(k)}</div><div class="s sm">${aph(l[0].artist).replace('class="cv"','class="mini"')}${esc(l[0].artist)}${vb(l[0].artist)} · ${aType(l.length)}</div></button>`;
 function play(i){
  const s=songs.find(x=>x.id===queue[i]);if(!s)return;
- qi=i;barMode='mini';SOC.plays=SOC.plays||{};SOC.plays[s.id]=(SOC.plays[s.id]||0)+1;SOC.recent=[s.id,...(SOC.recent||[]).filter(x=>x!==s.id)].slice(0,30);socSave();if(cur)URL.revokeObjectURL(cur);au.dataset.retry='';au.dataset.rl='';playTok++;clearTimeout(audioWarm.t);if(s.file){au.crossOrigin=null;cur=URL.createObjectURL(s.file);au.src=cur}else if(s.fid&&AUC.has(s.fid)){const tk=playTok;cur=null;au.crossOrigin=null;au.removeAttribute('src');audioGet(s.fid).then(u=>{if(tk!==playTok)return;if(u){cur=u;au.src=u}else{au.crossOrigin='anonymous';au.dataset.u=s.url||'';au.src=s.url}au.playbackRate=S.speed||1;au.play().catch(()=>{})})}else{cur=null;au.crossOrigin='anonymous';au.dataset.u=s.url||'';au.src=s.url;audioWarm(s)}au.playbackRate=S.speed||1;graph();au.play().catch(()=>{});
+ qi=i;barMode='mini';SOC.plays=SOC.plays||{};SOC.plays[s.id]=(SOC.plays[s.id]||0)+1;SOC.recent=[s.id,...(SOC.recent||[]).filter(x=>x!==s.id)].slice(0,30);socSave();if(cur)URL.revokeObjectURL(cur);au.dataset.retry='';au.dataset.rl='';playTok++;clearTimeout(audioWarm.t);if(s.file){au.crossOrigin=null;cur=URL.createObjectURL(s.file);au.src=cur}else if(s.fid&&window.caches){const tk=playTok;cur=null;au.crossOrigin=null;au.removeAttribute('src');audioPlay(s,tk)}else{cur=null;au.crossOrigin='anonymous';au.dataset.u=s.url||'';au.src=s.url}au.playbackRate=S.speed||1;graph();au.play().catch(()=>{});
  try{navigator.mediaSession.metadata=new MediaMetadata({title:s.title,artist:s.artist,album:s.album,artwork:sc(s)?[{src:sc(s)}]:[]})}catch(e){}
  player();render();if(npOpen)renderNP()}
 function startQ(ids,i){queue=ids;tapeSrc=(detail&&detail.t==='tape')?detail.k:null;play(i)}
@@ -259,7 +259,7 @@ function renderCfg(){
  bib:`<div class="cr"><div>Ordenar músicas por</div>${sel('sort',S.sort,[['title','Título'],['artist','Artista'],['recent','Mais recentes']])}</div><div class="cr"><div>Mostrar selo de verificado</div>${sw('badge',S.badge)}</div><div class="cr"><div>Tamanho da letra</div>${sel('lyr',S.lyr,[[18,'Pequena'],[22,'Média'],[28,'Grande']])}</div>`,
  notif:`<div class="cr"><div>Lançamentos de quem você segue<small>Avisar no sino quando sair música nova</small></div>${sw('notif',S.notif!==false)}</div>`,
  arm:driveOn()||driveSetupMode()?`<div class="cr"><div>Google Drive<small>${driveOn()?(driveAdmin?'Administrador conectado':'Modo ouvinte (somente leitura)'):'Configuração pendente'}</small></div></div><div class="cr"><div>${songs.length} música(s)<small>Biblioteca carregada do Drive</small></div><button class="pill" data-c="drefresh">Atualizar</button></div><div class="cr"><div>Testar conexão<small>Mostra o motivo de qualquer erro</small></div><button class="pill" data-c="ddiag">Testar</button></div><div id="dmsg" class="s" style="white-space:normal"></div>`:`<div class="cr"><div>${songs.length} música(s)<small>${mb} MB neste aparelho</small></div>${isAdm()?`<button class="danger" data-c="wipe">${wipeArm?'Toque de novo para apagar tudo':'Apagar biblioteca'}</button>`:''}</div>`,
- info:`<div class="cr"><div>Sonar<small>Versão ${APP_VERSION}</small></div></div><div class="cr"><div>Novidades<small>Cache de capas e músicas no aparelho: menos pedidos ao Google, início mais rápido</small></div></div><div class="cr"><div>Criador<small>eo_vinnyz</small></div></div><div class="cr"><div>Feito com<small>Claude, da Anthropic. Este app foi construído em conversa com ele.</small></div></div><div class="cr"><div>Dados<small>Tudo fica salvo neste aparelho</small></div></div>`};
+ info:`<div class="cr"><div>Sonar<small>Versão ${APP_VERSION}</small></div></div><div class="cr"><div>Novidades<small>Cada música é baixada uma única vez por aparelho e uma sessão por conta por vez</small></div></div><div class="cr"><div>Criador<small>eo_vinnyz</small></div></div><div class="cr"><div>Feito com<small>Claude, da Anthropic. Este app foi construído em conversa com ele.</small></div></div><div class="cr"><div>Dados<small>Tudo fica salvo neste aparelho</small></div></div>`};
  const title=cfgPage?CFGP.find(x=>x[0]===cfgPage)[1]:'Configurações e privacidade';
  $('#cf').innerHTML=`<div class="cfh"><button class="ic" data-c="back" aria-label="Voltar" style="transform:rotate(90deg)">${ico(I.dn)}</button><h2>${title}</h2></div>`+(cfgPage?P[cfgPage]:CFGP.map(([k,tt,s])=>`<button class="arow2" data-c="page" data-v="${k}"><div class="in"><div class="t">${tt}</div><div class="s">${s}</div></div></button>`).join(''));cfgFx()}
 function openCfg(){cfgPage=null;renderCfg();showEl('#cf','block')}
@@ -288,7 +288,7 @@ $('#cf').addEventListener('change',e=>{
 applyCfg();
 const t0=Date.now();
 const LOGO=$('#sp img').src;
-const APP_VERSION='1.18.0';
+const APP_VERSION='1.18.1';
 const LOGO_W='assets/logo-word.webp';
 const LOGO_S='assets/logo-symbol.webp';
 const EQB='<i class="eqb"><b></b><b></b><b></b></i>';
@@ -407,7 +407,7 @@ const avImg=(p,sz)=>`<span class="av" style="width:${sz}px;height:${sz}px;displa
 function openAcc(p){accPage=p||'menu';renderAcc();showEl('#pf','flex')}
 function closeAcc(){hideAnim('#pf')}
 function accBack(){if(accPage!=='menu'){accPage='menu';renderAcc()}else closeAcc()}
-function switchAcc(id){GTOK=null;driveAdmin=false;try{sessionStorage.removeItem('sonar-gtok')}catch(e){}ACC.cur=id;try{localStorage.setItem('sonar-session',id)}catch(e){}PROF=ACC.list.find(a=>a.id===id);loadSoc();profSave();tab='home';nav='home';detail=null;side='rec';render();renderAcc();toast('Conta: '+(PROF.name||'sem nome'))}
+function switchAcc(id){sessRelease();GTOK=null;driveAdmin=false;try{sessionStorage.removeItem('sonar-gtok')}catch(e){}ACC.cur=id;try{localStorage.setItem('sonar-session',id)}catch(e){}PROF=ACC.list.find(a=>a.id===id);loadSoc();profSave();tab='home';nav='home';detail=null;side='rec';render();renderAcc();toast('Conta: '+(PROF.name||'sem nome'));sessEnter()}
 function addAcc(){const n=($('#anew').value||'').trim();if(!n)return;const a={id:'a'+Date.now(),name:n,photo:''};ACC.list.push(a);switchAcc(a.id)}
 function delAcc(id){if(id===ACC.cur||ACC.list.length<2)return;ACC.list=ACC.list.filter(a=>a.id!==id);try{localStorage.removeItem(socKey(id))}catch(e){}profSave();renderAcc()}
 function capsule(){
@@ -470,7 +470,7 @@ function tapeMore(){
  const add=drawTape(x.ids,20),start=TL.length,se=$('#tsent');if(!se)return;TL.push(...add);
  se.insertAdjacentHTML('beforebegin',add.map((s,i)=>songRow(s,start+i,false,true).replace('class="row','class="row new')).join(''));
  if(tobs){tobs.unobserve(se);tobs.observe(se)}}
-const DCFG=Object.assign({site:'',clientId:'',apiKey:'',catalogId:'',folderId:''},window.SONAR_CONFIG||{});
+const DCFG=Object.assign({site:'',clientId:'',apiKey:'',catalogId:'',folderId:'',supaUrl:'',supaKey:''},window.SONAR_CONFIG||{});
 try{const o=JSON.parse(localStorage.getItem('sonar-drivecfg')||'{}');if(o.catalogId&&!DCFG.catalogId){DCFG.catalogId=o.catalogId;DCFG.folderId=o.folderId||''}}catch(e){}
 const drvHere=()=>!!(DCFG.clientId&&DCFG.apiKey&&(location.origin===DCFG.site||localStorage.getItem('sonar-forcedrive')==='1'));
 const driveOn=()=>drvHere()&&!!DCFG.catalogId;
@@ -501,6 +501,78 @@ function audioWarm(s){
   try{const c=await caches.open(AUN),r=await fetch(s.url);if(!r.ok)return;await c.put(AK(s.fid),r);AUC.add(s.fid);
    const ks=await c.keys();if(ks.length>AUMAX){const o=ks[0];AUC.delete(new URL(o.url).searchParams.get('f'));await c.delete(o)}}catch(e){}},10000)}
 audioInit();
+
+const AUP=new Map();
+function audioDl(s){
+ if(AUP.has(s.fid))return AUP.get(s.fid);
+ const p=(async()=>{
+  const r=await fetch(s.url);if(!r.ok)throw new Error('HTTP '+r.status);
+  const b=await r.blob();
+  try{const c=await caches.open(AUN);await c.put(AK(s.fid),new Response(b,{headers:{'Content-Type':b.type||'audio/mpeg'}}));AUC.add(s.fid);
+   const ks=await c.keys();if(ks.length>AUMAX){const o=ks[0];AUC.delete(new URL(o.url).searchParams.get('f'));await c.delete(o)}}catch(e){}
+  return b})();
+ AUP.set(s.fid,p);p.then(()=>AUP.delete(s.fid),()=>AUP.delete(s.fid));return p}
+async function audioPlay(s,tk){
+ let u=null;
+ if(AUC.has(s.fid))u=await audioGet(s.fid);
+ if(!u){
+  const t=setTimeout(()=>{if(tk===playTok)toast('Baixando a música…')},700);
+  let b=null;try{b=await audioDl(s)}catch(e){}
+  clearTimeout(t);
+  if(tk!==playTok)return;
+  if(!b){toast('O Google recusou o download desta música. Tente de novo mais tarde.');return}
+  u=URL.createObjectURL(b)}
+ if(tk!==playTok){URL.revokeObjectURL(u);return}
+ cur=u;au.src=u;au.playbackRate=S.speed||1;au.play().catch(()=>{})}
+
+/* ===== Sessão única por conta (precisa do Supabase em config.js) ===== */
+const SUPA=DCFG.supaUrl&&DCFG.supaKey?{u:String(DCFG.supaUrl).replace(/\/$/,''),k:DCFG.supaKey}:null,SESS={ok:false,id:'',t:0},SESS_TTL=120000,EU=encodeURIComponent;
+const DEVID=(()=>{try{let d=localStorage.getItem('sonar-dev');if(!d){d='d'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);localStorage.setItem('sonar-dev',d)}return d}catch(e){return 'd'+Math.random().toString(36).slice(2)}})();
+async function sbq(path,opt){
+ opt=opt||{};const h={apikey:SUPA.k,'Content-Type':'application/json',...(opt.headers||{})};if(String(SUPA.k).startsWith('eyJ'))h.Authorization='Bearer '+SUPA.k;
+ const r=await fetch(SUPA.u+'/rest/v1/'+path,{...opt,headers:h});if(!r.ok)throw new Error('HTTP '+r.status);
+ const x=await r.text();return x?JSON.parse(x):null}
+const sessUp=()=>sbq('sessions?on_conflict=id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({id:SESS.id,device:DEVID,seen:Date.now()})});
+async function sessClaim(force){
+ try{
+  const o=((await sbq('sessions?id=eq.'+EU(SESS.id)+'&select=device,seen'))||[])[0];
+  if(o&&o.device!==DEVID&&Date.now()-o.seen<SESS_TTL&&!force)return 'busy';
+  await sessUp();return 'ok'
+ }catch(e){return 'ok'}}
+async function sessBeat(){
+ if(!SUPA||!SESS.ok)return;
+ try{
+  const q='sessions?id=eq.'+EU(SESS.id);
+  const rows=await sbq(q+'&device=eq.'+EU(DEVID),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({seen:Date.now()})});
+  if(Array.isArray(rows)&&!rows.length){const o=((await sbq(q+'&select=device'))||[])[0];if(o&&o.device!==DEVID)sessKicked();else await sessUp()}
+ }catch(e){}}
+function sessKicked(){
+ SESS.ok=false;clearInterval(SESS.t);logout();
+ setTimeout(()=>{const e=$('#lge');if(e)e.textContent='Você foi desconectado: esta conta foi aberta em outro dispositivo.'},900)}
+function sessRelease(){
+ clearInterval(SESS.t);
+ if(SUPA&&SESS.ok&&SESS.id)sbq('sessions?id=eq.'+EU(SESS.id)+'&device=eq.'+EU(DEVID),{method:'DELETE'}).catch(()=>{});
+ SESS.ok=false}
+function sessUI(){
+ let e=$('#ss');if(e)return e;
+ const st=document.createElement('style');st.textContent='#ss{position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(6,3,13,.93);backdrop-filter:blur(10px);color:#fff;font-family:inherit}#ss[hidden]{display:none}#ss .bx{max-width:380px;width:100%;text-align:center;background:#14102a;border:1px solid #ffffff1a;border-radius:22px;padding:28px 22px}#ss h2{margin:0 0 8px;font-size:20px}#ss p{margin:0 0 18px;opacity:.75;line-height:1.45;font-size:14px}#ss button{display:block;width:100%;border:0;border-radius:999px;padding:13px;font:inherit;font-weight:700;cursor:pointer;margin-top:10px}#ss .y{background:var(--ac);color:var(--act)}#ss .n{background:#ffffff14;color:#fff}';document.head.appendChild(st);
+ e=document.createElement('div');e.id='ss';e.hidden=true;
+ e.innerHTML='<div class="bx"><h2>O Sonar já está aberto em outro dispositivo</h2><p>Só dá para usar uma sessão por vez nesta conta. Quer desconectar a outra e entrar aqui?</p><button class="y" id="ssy">Desconectar a outra e entrar</button><button class="n" id="ssn">Cancelar</button></div>';
+ document.body.appendChild(e);
+ $('#ssy').onclick=async()=>{sessHide();freshSplash();try{await sessEnter(true)}finally{hideBarSplash()}};
+ $('#ssn').onclick=()=>{sessHide();logout()};
+ return e}
+const sessShow=()=>{sessUI().hidden=false};
+const sessHide=()=>{const e=$('#ss');if(e)e.hidden=true};
+async function sessEnter(force){
+ try{
+  if(!SUPA||!driveOn())return true;
+  SESS.id=((PROF&&PROF.name)||'').trim().toLowerCase();if(!SESS.id)return true;
+  if(await sessClaim(force)==='busy'){SESS.ok=false;sessShow();return false}
+  SESS.ok=true;sessHide();clearInterval(SESS.t);SESS.t=setInterval(sessBeat,30000);
+  if(!lastDL){await driveBoot();render()}
+  return true
+ }catch(e){return true}}
 const extOf=f=>(String(f.name||'').match(/\.[^.]+$/)||['.mp3'])[0];
 const dataBlob=u=>{const m=u.match(/^data:(.*?);base64,(.*)$/);const bin=atob(m[2]),a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:m[1]})};
 const gisReady=()=>typeof google!=='undefined'&&google.accounts&&google.accounts.oauth2;
@@ -534,7 +606,7 @@ async function driveBoot(){
  const ok=await Promise.race([driveLoad(),new Promise(r=>setTimeout(()=>r(false),8000))]);
  if(!ok)setTimeout(()=>toast('Sem conexão com o Drive.'),500);
  if(GTOK&&ADMINS.includes((PROF.name||'').trim().toLowerCase()))driveCheckAdmin()}
-function driveSync(){if(!driveOn()||driveAdmin||catSaving||document.visibilityState!=='visible'||Date.now()-lastDL<300000)return;driveLoad().then(r=>{if(r==='new')render()})}
+function driveSync(){if(!driveOn()||driveAdmin||catSaving||document.visibilityState!=='visible'||Date.now()-lastDL<300000||(SUPA&&!SESS.ok))return;driveLoad().then(r=>{if(r==='new')render()})}
 function catJson(){return{v:1,t:Date.now(),songs:songs.map(s=>({id:s.id,title:s.title,artist:s.artist,feats:s.feats||[],album:s.album,dur:s.dur||0,added:s.added||0,fid:s.fid,cv:s.cv||null,acv:s.acv||null,scv:s.scv||null,lyrics:s.lyrics||'',kind:s.kind||''})),artists:Object.values(AR).map(a=>({name:a.name,bio:a.bio||'',verified:a.verified!==false,pid:a.pid||null})),ord:ORD}}
 async function catSaveNow(){const j=catJson();await gfetch(GUP+'/files/'+DCFG.catalogId+'?uploadType=media',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(j)});catT=j.t;try{localStorage.setItem('sonar-catcache',JSON.stringify(j))}catch(e){}}
 function catMark(){if(!driveOn())return;catDirty=true;clearTimeout(catMark.t);catMark.t=setTimeout(catFlush,900)}
@@ -803,9 +875,9 @@ function doLogin(){
  if(!a){const empty=ACC.list.find(x=>!(x.name||'').trim());if(empty){empty.name=v;a=empty}else{a={id:'a'+Date.now(),name:v,photo:''};ACC.list.push(a)}}
  ACC.cur=a.id;PROF=a;loadSoc();profSave();
  try{localStorage.setItem('sonar-session',a.id);localStorage.setItem('sonar-lastuser',a.name)}catch(x){}
- g.classList.add('lg-out');
- setTimeout(()=>{freshSplash();setTimeout(()=>{H.classList.remove('gout');tab='home';nav='home';detail=null;side='rec';barMode='nav';render();g.hidden=true;g.classList.remove('lg-out');hideBarSplash(()=>toast('Bem-vindo, '+a.name))},2000)},450)}
-function logout(){GTOK=null;driveAdmin=false;try{sessionStorage.removeItem('sonar-gtok')}catch(e){}
+ g.classList.add('lg-out');const sp=(SUPA&&driveOn())?sessEnter():Promise.resolve(true);
+ setTimeout(()=>{freshSplash();setTimeout(()=>{sp.then(()=>{H.classList.remove('gout');tab='home';nav='home';detail=null;side='rec';barMode='nav';render();g.hidden=true;g.classList.remove('lg-out');hideBarSplash(()=>toast('Bem-vindo, '+a.name))})},2000)},450)}
+function logout(){sessRelease();GTOK=null;driveAdmin=false;try{sessionStorage.removeItem('sonar-gtok')}catch(e){}
  try{localStorage.removeItem('sonar-session')}catch(e){}
  au.pause();queue=[];qi=-1;tapeSrc=null;DEV=null;barMode='nav';closeNP();closeAcc();closeCfg();closeSheet();
  setTimeout(()=>{H.classList.add('gout');detail=null;tab='home';nav='home';render();showLogin()},300)}
@@ -821,8 +893,8 @@ $('#lgu').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();
 $('#lgu').addEventListener('input',()=>{$('#lge').textContent=''});
 wireGate();
 (async()=>{db=await openDB();
- if(driveOn()){songs=[];AR={};ORD={};await driveBoot()}else{songs=await dbAll();(await adbAll()).forEach(a=>{AR[a.name]=a})}
- render();bootFlow()})();
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')driveSync()});
+ if(driveOn()){songs=[];AR={};ORD={};if(!SUPA)await driveBoot()}else{songs=await dbAll();(await adbAll()).forEach(a=>{AR[a.name]=a})}
+ render();if(SUPA&&driveOn()&&sessionOk())await Promise.race([sessEnter(),new Promise(r=>setTimeout(r,9000))]);bootFlow()})();
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){sessBeat();driveSync()}});
 setInterval(driveSync,600000);
 setTimeout(bootFlow,5000);
