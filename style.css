@@ -533,10 +533,10 @@ html,body,.card,.c2,.about,#cf,#pf,.shc{transition:background-color .3s,color .3
 @keyframes s2Breath{from{opacity:.6;transform:translate(-50%,-50%) scale(.92)}to{opacity:1;transform:translate(-50%,-50%) scale(1.08)}}
 #lg[hidden]{display:none}
 .lg-bg{position:absolute;inset:0;overflow:hidden}
-.lg-blur{position:absolute;left:50%;top:46%;width:min(190vw,1500px);opacity:.5;transform:translate(-50%,-50%);will-change:transform}
-.lgb-i{display:flex;flex-direction:column;align-items:center;gap:5%;filter:blur(30px) saturate(1.6)}
-.lg-blur .lbs{width:62%;height:auto}
-.lg-blur .lbw{width:80%;height:auto}
+.lg-blur{position:absolute;left:50%;top:46%;width:min(190vw,1500px);opacity:.5;transform:translate(-50%,-50%)}
+.lgb-i{display:block}
+.lg-blur .lbs{display:block;width:100%;height:auto}
+.lg-blur .lbw{display:none}
 .lg-pc{--sw:460px}
 .lg-pc .lg-blur{left:calc(var(--sw) + (100% - var(--sw))/2);top:50%;width:min(calc((100vw - var(--sw)) * 1.08),1250px)}
 .lg-panel{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px 28px calc(64px + env(safe-area-inset-bottom,0px));text-align:center}
@@ -551,7 +551,8 @@ html,body,.card,.c2,.about,#cf,#pf,.shc{transition:background-color .3s,color .3
 .lg-f input:focus{border-color:var(--ac);background:rgba(255,255,255,.12);box-shadow:0 0 0 4px color-mix(in srgb,var(--ac) 28%,transparent);transform:translateY(-1px)}
 .lg-e{min-height:20px;color:#ff8fa3;font-size:14px}
 .lg-b{position:relative;overflow:hidden;padding:16px;border-radius:16px;background:var(--ac);color:var(--act);font:inherit;font-weight:800;font-size:17px;cursor:pointer;transition:transform .2s,box-shadow .25s,filter .2s}
-.lg-b::after{content:"";position:absolute;top:0;left:0;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:translateX(-160%) skewX(-18deg);animation:lgShine 3.4s ease-in-out 1.6s infinite;pointer-events:none}
+.lg-b::after{content:"";position:absolute;top:0;left:0;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:translateX(-160%) skewX(-18deg);pointer-events:none}
+.lg-b:hover::after{animation:lgShine 1.1s ease-in-out 1}
 .lg-b:hover{transform:translateY(-2px);box-shadow:0 12px 32px color-mix(in srgb,var(--ac) 40%,transparent)}
 .lg-b:active{transform:scale(.97)}
 .lg-v{position:absolute;left:0;right:0;bottom:calc(20px + env(safe-area-inset-bottom,0px));text-align:center;font-size:12px;letter-spacing:.1em;color:rgba(255,255,255,.5)}
@@ -570,7 +571,7 @@ html,body,.card,.c2,.about,#cf,#pf,.shc{transition:background-color .3s,color .3
 @keyframes lgShine{0%,60%{transform:translateX(-160%) skewX(-18deg)}100%{transform:translateX(420%) skewX(-18deg)}}
 @keyframes lgOutP{to{opacity:0;transform:translateY(-24px) scale(.97)}}
 @keyframes lgZoom{to{opacity:0;transform:translate(-50%,-50%) scale(1.5)}}
-.lg-in .lg-blur{animation:lgBgIn 1.3s cubic-bezier(.2,.8,.2,1) both,lgDrift 16s ease-in-out 1.3s infinite alternate}
+.lg-in .lg-blur{animation:lgBgIn 1.3s cubic-bezier(.2,.8,.2,1) both}
 .lg-in .lg-panel{animation:lgPanel .7s ease both}
 .lg-pc.lg-in .lg-panel{animation:lgPanelPc .8s cubic-bezier(.2,.8,.2,1) both}
 .lg-in .lg-logo .sym{animation:lgLogo .95s cubic-bezier(.2,1.25,.3,1) .1s both}
@@ -585,6 +586,6 @@ html,body,.card,.c2,.about,#cf,#pf,.shc{transition:background-color .3s,color .3
 .lg-out .lg-blur{animation:lgZoom .6s ease forwards}
 .lg-logo{position:relative;isolation:isolate}
 .lg-logo::before{content:"";position:absolute;left:50%;top:-30px;width:260px;height:260px;margin-left:-130px;border-radius:50%;background:radial-gradient(circle,rgba(167,139,250,.5),transparent 65%);z-index:-1;opacity:0;pointer-events:none}
-.lg-in .lg-logo::before{animation:lgPulse 3s ease-in-out .6s infinite alternate}
+.lg-in .lg-logo::before{opacity:.6}
 .lg-pc .lg-logo::before{left:75px}
 .lg-panel,.lg-bg{contain:paint}
