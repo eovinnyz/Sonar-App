@@ -132,7 +132,7 @@ $('#es').onclick=()=>{
 let covK=null,covS=null;
 function openCover(k){warm();covK=k;covS=null;covA=null;covN=false;covP=false;$('#fc').click()}
 function openSongCover(id){warm();covS=id;covK=null;covA=null;covN=false;covP=false;$('#fc').click()}
-function resize(f){return new Promise(r=>{const u=URL.createObjectURL(f),im=new Image();im.onload=()=>{const m=Math.min(1,400/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*m;c.height=im.height*m;c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);r(c.toDataURL('image/jpeg',.85))};im.onerror=()=>r('');im.src=u})}
+function resize(f){return new Promise(r=>{const u=URL.createObjectURL(f),im=new Image();im.onload=()=>{const m=Math.min(1,400/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*m;c.height=im.height*m;c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);r(c.toDataURL('image/jpeg',.8))};im.onerror=()=>r('');im.src=u})}
 $('#fc').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f||(covK==null&&covS==null&&covA==null&&!covN&&!covP))return;const url=await resize(f);if(!url)return;if(covP){PROF.photo=url;profSave();renderAcc();render();return}if(covN){U.cover=url;renderUp();return}if(covA!=null){await setArtistPhoto(covA,url).catch(e=>toast('Drive: '+e.message))}else if(covS){await setSongCover(covS,url).catch(e=>toast('Drive: '+e.message))}else await setAlbumCover(covK,url).catch(e=>toast('Drive: '+e.message));render();player();if(npOpen)renderNP()};
 $('#ecs').onclick=()=>{if(editId)openSongCover(editId)};
 $('#ecv').onclick=()=>{const s=songs.find(x=>x.id===editId);if(s)openCover(s.album)};
@@ -259,7 +259,7 @@ function renderCfg(){
  bib:`<div class="cr"><div>Ordenar músicas por</div>${sel('sort',S.sort,[['title','Título'],['artist','Artista'],['recent','Mais recentes']])}</div><div class="cr"><div>Mostrar selo de verificado</div>${sw('badge',S.badge)}</div><div class="cr"><div>Tamanho da letra</div>${sel('lyr',S.lyr,[[18,'Pequena'],[22,'Média'],[28,'Grande']])}</div>`,
  notif:`<div class="cr"><div>Lançamentos de quem você segue<small>Avisar no sino quando sair música nova</small></div>${sw('notif',S.notif!==false)}</div>`,
  arm:driveOn()||driveSetupMode()?`<div class="cr"><div>Google Drive<small>${driveOn()?(driveAdmin?'Administrador conectado':'Modo ouvinte (somente leitura)'):'Configuração pendente'}</small></div></div><div class="cr"><div>${songs.length} música(s)<small>Biblioteca carregada do Drive</small></div><button class="pill" data-c="drefresh">Atualizar</button></div><div class="cr"><div>Testar conexão<small>Mostra o motivo de qualquer erro</small></div><button class="pill" data-c="ddiag">Testar</button></div><div id="dmsg" class="s" style="white-space:normal"></div>`:`<div class="cr"><div>${songs.length} música(s)<small>${mb} MB neste aparelho</small></div>${isAdm()?`<button class="danger" data-c="wipe">${wipeArm?'Toque de novo para apagar tudo':'Apagar biblioteca'}</button>`:''}</div>`,
- info:`<div class="cr"><div>Sonar<small>Versão ${APP_VERSION}</small></div></div><div class="cr"><div>Novidades<small>Cada música é baixada uma única vez por aparelho e uma sessão por conta por vez</small></div></div><div class="cr"><div>Criador<small>eo_vinnyz</small></div></div><div class="cr"><div>Feito com<small>Claude, da Anthropic. Este app foi construído em conversa com ele.</small></div></div><div class="cr"><div>Dados<small>Tudo fica salvo neste aparelho</small></div></div>`};
+ info:`<div class="cr"><div>Sonar<small>Versão ${APP_VERSION}</small></div></div><div class="cr"><div>Novidades<small>Nova fonte, lista completa de artistas recomendados e menos acessos ao Drive</small></div></div><div class="cr"><div>Criador<small>eo_vinnyz</small></div></div><div class="cr"><div>Feito com<small>Claude, da Anthropic. Este app foi construído em conversa com ele.</small></div></div><div class="cr"><div>Dados<small>Tudo fica salvo neste aparelho</small></div></div>`};
  const title=cfgPage?CFGP.find(x=>x[0]===cfgPage)[1]:'Configurações e privacidade';
  $('#cf').innerHTML=`<div class="cfh"><button class="ic" data-c="back" aria-label="Voltar" style="transform:rotate(90deg)">${ico(I.dn)}</button><h2>${title}</h2></div>`+(cfgPage?P[cfgPage]:CFGP.map(([k,tt,s])=>`<button class="arow2" data-c="page" data-v="${k}"><div class="in"><div class="t">${tt}</div><div class="s">${s}</div></div></button>`).join(''));cfgFx()}
 function openCfg(){cfgPage=null;renderCfg();showEl('#cf','block')}
@@ -288,7 +288,7 @@ $('#cf').addEventListener('change',e=>{
 applyCfg();
 const t0=Date.now();
 const LOGO=$('#sp img').src;
-const APP_VERSION='1.18.1';
+const APP_VERSION='1.18.2';
 const LOGO_W='assets/logo-word.webp';
 const LOGO_S='assets/logo-symbol.webp';
 const EQB='<i class="eqb"><b></b><b></b><b></b></i>';
@@ -374,7 +374,7 @@ function renderSide(){
  if(side==='follow'){h=`<h3>Seguindo</h3>${SOC.follows.length?SOC.follows.map(artRow).join(''):'<div class="s">Você ainda não segue ninguém. Abra o perfil de um artista e toque em Seguir.</div>'}`}
  else if(side==='lib'){h=`<h3>Playlists<button class="pp" data-a="newpl" aria-label="Nova playlist">${ico('M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z')}</button></h3>`+[['fav','Favoritos','Sua trilha sonora']].concat(SOC.lists.map(l=>[l.id,l.name,'Por você'])).map(([id,n,sub])=>`<div class="row">${id==='fav'?favCov():cov(listSongs(id),n)}<button class="in" data-a="open" data-t="list" data-k="${id}"><div class="t">${esc(n)}</div><div class="s">${sub}</div></button><button class="pp" data-a="playlist" data-k="${id}" aria-label="Tocar">${ico(I.play)}</button></div>`).join('')}
  else{
-  const rc=artistGroups().filter(([k])=>!SOC.follows.includes(k)).slice(0,6),al=group('album').sort((a,b)=>mx(b[1])-mx(a[1])).slice(0,6);
+  const rc=artistGroups().filter(([k])=>!SOC.follows.includes(k)),al=group('album').sort((a,b)=>mx(b[1])-mx(a[1])).slice(0,6);
   h=`<h3>Recomendado para você</h3>${rc.length?rc.map(([k])=>artRow(k)).join(''):'<div class="s">Você já segue todos os artistas.</div>'}<h3>Novos lançamentos</h3>${al.map(([k,l])=>`<button class="row" style="width:100%;text-align:left" data-a="open" data-t="album" data-k="${esc(k)}">${cov(l,k)}<div class="in"><div class="t">${esc(k)}</div><div class="s">${esc(l[0].artist)}</div><div class="s">${aType(l.length)} · ${new Date(mx(l)).getFullYear()}</div></div></button>`).join('')}`}
  sd.innerHTML=`<div class="sdt"><div class="sclk" id="clk">${clockHtml()}</div><span class="grow"></span>${bellBtn()}${avBtn()}</div>`+h;if(lastSide!==side){lastSide=side;sd.classList.remove('sd-in');void sd.offsetWidth;sd.classList.add('sd-in')}}
 function renderBar(){
@@ -592,8 +592,8 @@ async function driveCheckAdmin(){
  try{const j=await(await gfetch(GAPI+'/files/'+DCFG.catalogId+'?fields=capabilities(canEdit)')).json();driveAdmin=!!(j.capabilities&&j.capabilities.canEdit)}catch(e){driveAdmin=false;driveErr=e.message}
  render()}
 function applyCatalog(j){
- songs=(j.songs||[]).map(s=>({...s,feats:s.feats||[],url:mediaUrl(s.fid),cover:imgSrc(s.cv),acover:s.acv?imgSrc(s.acv):undefined,scover:s.scv?imgSrc(s.scv):undefined,size:0}));
- AR={};(j.artists||[]).forEach(a=>{AR[a.name]={name:a.name,bio:a.bio||'',verified:a.verified!==false,photo:imgSrc(a.pid),pid:a.pid||null}});
+ songs=(j.songs||[]).map(s=>{const o={...s,feats:s.feats||[],url:mediaUrl(s.fid),size:0},d=(k,f)=>({get(){return this[k]||f(this)},set(v){this[k]=v},enumerable:true,configurable:true});Object.defineProperties(o,{cover:d('_c',x=>imgSrc(x.cv)),acover:d('_a',x=>x.acv?imgSrc(x.acv):undefined),scover:d('_s',x=>x.scv?imgSrc(x.scv):undefined)});return o});
+ AR={};(j.artists||[]).forEach(a=>{AR[a.name]={name:a.name,bio:a.bio||'',verified:a.verified!==false,pid:a.pid||null,get photo(){return this._p||imgSrc(this.pid)},set photo(v){this._p=v}}});
  ORD=j.ord||{}}
 async function driveLoad(){
  let j=null;
@@ -895,6 +895,5 @@ wireGate();
 (async()=>{db=await openDB();
  if(driveOn()){songs=[];AR={};ORD={};if(!SUPA)await driveBoot()}else{songs=await dbAll();(await adbAll()).forEach(a=>{AR[a.name]=a})}
  render();if(SUPA&&driveOn()&&sessionOk())await Promise.race([sessEnter(),new Promise(r=>setTimeout(r,9000))]);bootFlow()})();
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){sessBeat();driveSync()}});
-setInterval(driveSync,600000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')sessBeat()});
 setTimeout(bootFlow,5000);
