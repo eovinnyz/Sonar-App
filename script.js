@@ -39,7 +39,7 @@ function songRow(s,i,num,hl){
 const albumCard=(k,l)=>`<button class="card" data-a="open" data-t="album" data-k="${esc(k)}">${cov(l,k)}<div class="t">${esc(k)}</div><div class="s sm">${aph(l[0].artist).replace('class="cv"','class="mini"')}${esc(l[0].artist)}${vb(l[0].artist)} · ${aType(l.length)}</div></button>`;
 function play(i){
  const s=songs.find(x=>x.id===queue[i]);if(!s)return;
- qi=i;barMode='mini';SOC.plays=SOC.plays||{};SOC.plays[s.id]=(SOC.plays[s.id]||0)+1;SOC.recent=[s.id,...(SOC.recent||[]).filter(x=>x!==s.id)].slice(0,30);socSave();if(cur)URL.revokeObjectURL(cur);au.dataset.retry='';au.dataset.rl='';playTok++;clearTimeout(audioWarm.t);if(s.file){au.crossOrigin=null;cur=URL.createObjectURL(s.file);au.src=cur}else if(s.fid&&window.caches){const tk=playTok;cur=null;au.crossOrigin=null;au.removeAttribute('src');audioPlay(s,tk)}else{cur=null;au.crossOrigin='anonymous';au.dataset.u=s.url||'';au.src=s.url}au.playbackRate=S.speed||1;graph();au.play().catch(()=>{});
+ qi=i;barMode='mini';SOC.plays=SOC.plays||{};SOC.plays[s.id]=(SOC.plays[s.id]||0)+1;SOC.recent=[s.id,...(SOC.recent||[]).filter(x=>x!==s.id)].slice(0,30);socSave();if(cur)URL.revokeObjectURL(cur);au.dataset.retry='';au.dataset.rl='';playTok++;sessBeat();clearTimeout(audioWarm.t);if(s.file){au.crossOrigin=null;cur=URL.createObjectURL(s.file);au.src=cur}else if(s.fid&&window.caches){const tk=playTok;cur=null;au.crossOrigin=null;au.removeAttribute('src');audioPlay(s,tk)}else{cur=null;au.crossOrigin='anonymous';au.dataset.u=s.url||'';au.src=s.url}au.playbackRate=S.speed||1;graph();au.play().catch(()=>{});
  try{navigator.mediaSession.metadata=new MediaMetadata({title:s.title,artist:s.artist,album:s.album,artwork:sc(s)?[{src:sc(s)}]:[]})}catch(e){}
  player();render();if(npOpen)renderNP()}
 function startQ(ids,i){queue=ids;tapeSrc=(detail&&detail.t==='tape')?detail.k:null;play(i)}
@@ -259,7 +259,7 @@ function renderCfg(){
  bib:`<div class="cr"><div>Ordenar músicas por</div>${sel('sort',S.sort,[['title','Título'],['artist','Artista'],['recent','Mais recentes']])}</div><div class="cr"><div>Mostrar selo de verificado</div>${sw('badge',S.badge)}</div><div class="cr"><div>Tamanho da letra</div>${sel('lyr',S.lyr,[[18,'Pequena'],[22,'Média'],[28,'Grande']])}</div>`,
  notif:`<div class="cr"><div>Lançamentos de quem você segue<small>Avisar no sino quando sair música nova</small></div>${sw('notif',S.notif!==false)}</div>`,
  arm:driveOn()||driveSetupMode()?`<div class="cr"><div>Google Drive<small>${driveOn()?(driveAdmin?'Administrador conectado':'Modo ouvinte (somente leitura)'):'Configuração pendente'}</small></div></div><div class="cr"><div>${songs.length} música(s)<small>Biblioteca carregada do Drive</small></div><button class="pill" data-c="drefresh">Atualizar</button></div><div class="cr"><div>Testar conexão<small>Mostra o motivo de qualquer erro</small></div><button class="pill" data-c="ddiag">Testar</button></div><div id="dmsg" class="s" style="white-space:normal"></div>`:`<div class="cr"><div>${songs.length} música(s)<small>${mb} MB neste aparelho</small></div>${isAdm()?`<button class="danger" data-c="wipe">${wipeArm?'Toque de novo para apagar tudo':'Apagar biblioteca'}</button>`:''}</div>`,
- info:`<div class="cr"><div>Sonar<small>Versão ${APP_VERSION}</small></div></div><div class="cr"><div>Novidades<small>Nova fonte, lista completa de artistas recomendados e menos acessos ao Drive</small></div></div><div class="cr"><div>Criador<small>eo_vinnyz</small></div></div><div class="cr"><div>Feito com<small>Claude, da Anthropic. Este app foi construído em conversa com ele.</small></div></div><div class="cr"><div>Dados<small>Tudo fica salvo neste aparelho</small></div></div>`};
+ info:`<div class="cr"><div>Sonar<small>Versão ${APP_VERSION}</small></div></div><div class="cr"><div>Novidades<small>Diagnóstico da sessão e desconexão mais rápida do outro aparelho</small></div></div><div class="cr"><div>Criador<small>eo_vinnyz</small></div></div><div class="cr"><div>Feito com<small>Claude, da Anthropic. Este app foi construído em conversa com ele.</small></div></div><div class="cr"><div>Dados<small>Tudo fica salvo neste aparelho</small></div></div>`};
  const title=cfgPage?CFGP.find(x=>x[0]===cfgPage)[1]:'Configurações e privacidade';
  $('#cf').innerHTML=`<div class="cfh"><button class="ic" data-c="back" aria-label="Voltar" style="transform:rotate(90deg)">${ico(I.dn)}</button><h2>${title}</h2></div>`+(cfgPage?P[cfgPage]:CFGP.map(([k,tt,s])=>`<button class="arow2" data-c="page" data-v="${k}"><div class="in"><div class="t">${tt}</div><div class="s">${s}</div></div></button>`).join(''));cfgFx()}
 function openCfg(){cfgPage=null;renderCfg();showEl('#cf','block')}
@@ -288,7 +288,7 @@ $('#cf').addEventListener('change',e=>{
 applyCfg();
 const t0=Date.now();
 const LOGO=$('#sp img').src;
-const APP_VERSION='1.18.2';
+const APP_VERSION='1.18.3';
 const LOGO_W='assets/logo-word.webp';
 const LOGO_S='assets/logo-symbol.webp';
 const EQB='<i class="eqb"><b></b><b></b><b></b></i>';
@@ -526,7 +526,7 @@ async function audioPlay(s,tk){
  cur=u;au.src=u;au.playbackRate=S.speed||1;au.play().catch(()=>{})}
 
 /* ===== Sessão única por conta (precisa do Supabase em config.js) ===== */
-const SUPA=DCFG.supaUrl&&DCFG.supaKey?{u:String(DCFG.supaUrl).replace(/\/$/,''),k:DCFG.supaKey}:null,SESS={ok:false,id:'',t:0},SESS_TTL=120000,EU=encodeURIComponent;
+const SUPA=DCFG.supaUrl&&DCFG.supaKey?{u:String(DCFG.supaUrl).replace(/\/$/,''),k:DCFG.supaKey}:null,SESS={ok:false,id:'',t:0,last:0},SESS_TTL=120000,EU=encodeURIComponent;
 const DEVID=(()=>{try{let d=localStorage.getItem('sonar-dev');if(!d){d='d'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);localStorage.setItem('sonar-dev',d)}return d}catch(e){return 'd'+Math.random().toString(36).slice(2)}})();
 async function sbq(path,opt){
  opt=opt||{};const h={apikey:SUPA.k,'Content-Type':'application/json',...(opt.headers||{})};if(String(SUPA.k).startsWith('eyJ'))h.Authorization='Bearer '+SUPA.k;
@@ -534,13 +534,12 @@ async function sbq(path,opt){
  const x=await r.text();return x?JSON.parse(x):null}
 const sessUp=()=>sbq('sessions?on_conflict=id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({id:SESS.id,device:DEVID,seen:Date.now()})});
 async function sessClaim(force){
- try{
-  const o=((await sbq('sessions?id=eq.'+EU(SESS.id)+'&select=device,seen'))||[])[0];
-  if(o&&o.device!==DEVID&&Date.now()-o.seen<SESS_TTL&&!force)return 'busy';
-  await sessUp();return 'ok'
- }catch(e){return 'ok'}}
+ let o=null;
+ try{o=((await sbq('sessions?id=eq.'+EU(SESS.id)+'&select=device,seen'))||[])[0]}catch(e){return 'ok'}
+ if(o&&o.device!==DEVID&&Date.now()-o.seen<SESS_TTL&&!force)return 'busy';
+ try{await sessUp();return 'ok'}catch(e){SESS.err=String(e.message||e);return force?'err':'ok'}}
 async function sessBeat(){
- if(!SUPA||!SESS.ok)return;
+ if(!SUPA||!SESS.ok||Date.now()-SESS.last<4000)return;SESS.last=Date.now();
  try{
   const q='sessions?id=eq.'+EU(SESS.id);
   const rows=await sbq(q+'&device=eq.'+EU(DEVID),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({seen:Date.now()})});
@@ -568,8 +567,10 @@ async function sessEnter(force){
  try{
   if(!SUPA||!driveOn())return true;
   SESS.id=((PROF&&PROF.name)||'').trim().toLowerCase();if(!SESS.id)return true;
-  if(await sessClaim(force)==='busy'){SESS.ok=false;sessShow();return false}
-  SESS.ok=true;sessHide();clearInterval(SESS.t);SESS.t=setInterval(sessBeat,30000);
+  const cr=await sessClaim(force);
+  if(cr==='busy'){SESS.ok=false;sessShow();return false}
+  if(cr==='err'){SESS.ok=false;sessShow();toast('Não consegui desconectar a outra sessão ('+SESS.err+'). Veja em Configurações → Armazenamento → Testar conexão.');return false}
+  SESS.ok=true;sessHide();clearInterval(SESS.t);SESS.t=setInterval(sessBeat,15000);
   if(!lastDL){await driveBoot();render()}
   return true
  }catch(e){return true}}
@@ -693,6 +694,15 @@ async function driveDiag(){
  add('Origem',location.origin+(location.origin===DCFG.site?' (ok)':' (diferente de '+DCFG.site+')'));
  add('Catálogo configurado',DCFG.catalogId?'sim':'não');
  try{const r=await fetch(GAPI+'/files/'+DCFG.catalogId+'?alt=media&key='+DCFG.apiKey+'&t='+Date.now());add('Leitura com a chave de API',r.ok?'ok ('+r.status+')':'erro '+r.status);if(!r.ok){try{add('Detalhe',(await r.json()).error.message)}catch(e){}}}catch(e){add('Leitura com a chave de API','falhou: '+e.message)}
+ if(SUPA){
+  const st=async(m,path,body,hd)=>{try{const r=await fetch(SUPA.u+'/rest/v1/'+path,{method:m,headers:{apikey:SUPA.k,'Content-Type':'application/json',...(String(SUPA.k).startsWith('eyJ')?{Authorization:'Bearer '+SUPA.k}:{}),...(hd||{})},body});let x='';try{x=(await r.text()).slice(0,140)}catch(e){}return [r.ok,r.status,x]}catch(e){return [false,0,e.message]}};
+  const show=(k,[ok,s,x])=>add(k,ok?'ok ('+s+')':'erro '+(s||'')+' '+x);
+  const rd=await st('GET','sessions?select=id,device&limit=1');show('Supabase: ler sessões',rd);
+  show('Supabase: gravar',await st('POST','sessions?on_conflict=id',JSON.stringify({id:'__teste__',device:DEVID,seen:Date.now()}),{Prefer:'resolution=merge-duplicates,return=minimal'}));
+  const up=await st('PATCH','sessions?id=eq.__teste__',JSON.stringify({seen:Date.now()}),{Prefer:'return=representation'});
+  if(up[0]&&up[2].trim()==='[]')add('Supabase: atualizar','bloqueado (nenhuma linha atualizada: falta a regra de update)');else show('Supabase: atualizar',up);
+  show('Supabase: apagar',await st('DELETE','sessions?id=eq.__teste__'));
+  add('Sessão deste aparelho',(SESS.ok?'ativa':'inativa')+' · código '+DEVID.slice(-5))}
  add('Script do login Google',gisReady()?'carregado':'não carregou');
  add('Administrador',driveAdmin?'sim':'não')}
 function gShow(){return(driveOn()||driveSetupMode())&&ADMINS.includes((PROF.name||'').trim().toLowerCase())}
@@ -896,4 +906,5 @@ wireGate();
  if(driveOn()){songs=[];AR={};ORD={};if(!SUPA)await driveBoot()}else{songs=await dbAll();(await adbAll()).forEach(a=>{AR[a.name]=a})}
  render();if(SUPA&&driveOn()&&sessionOk())await Promise.race([sessEnter(),new Promise(r=>setTimeout(r,9000))]);bootFlow()})();
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')sessBeat()});
+['focus','pageshow','online'].forEach(ev=>window.addEventListener(ev,()=>sessBeat()));
 setTimeout(bootFlow,5000);
