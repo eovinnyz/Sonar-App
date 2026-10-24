@@ -681,7 +681,7 @@ html.dsk .rz{display:block}html.dsk.nr #rzr{display:none}
 #rzl{left:calc(var(--wl,232px) + 12px)}#rzr{right:calc(var(--wr,340px) + 12px)}
 .rz:hover,.rz.on{background:rgba(128,128,128,.3)}
 .lnb svg,.lnb svg *{fill:currentColor}
-html.dsk #pf,html.dsk #cf{top:12px;right:12px;bottom:84px;left:auto;width:min(380px,42vw);border-radius:24px;border:1px solid var(--ln);overflow:hidden}
+html.dsk #pf,html.dsk #cf{top:12px;right:12px;bottom:84px;left:auto;width:min(380px,42vw);border-radius:24px;border:1px solid var(--ln);overflow-x:hidden;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--ac) transparent}
 .lscr{flex:1;min-height:0;overflow-y:auto;margin-top:8px}
 .lscr h4{margin:14px 14px 6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)}
 .lscr .tags{padding:0 10px}
@@ -713,3 +713,8 @@ html.dsk #ctr .sr.pl,html.dsk #ctr .row.sh.pl{grid-template-columns:40px minmax(
 .erel input,.erel textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--ln);background:var(--bg);color:var(--tx);font:inherit}
 .etr{display:flex;gap:10px;margin:10px 0;padding:10px;border-radius:14px;background:rgba(128,128,128,.12);align-items:flex-start}
 .etr .n{width:24px;text-align:center;color:var(--mu);padding-top:10px}.etr .f{flex:1;display:grid;gap:6px}
+html.dsk #lnav>*{zoom:var(--zl,1)}
+html.dsk #hd,html.dsk #mn{zoom:var(--zc,1)}
+html.dsk #side>*{zoom:var(--zr,1)}
+#cf,#pf{scrollbar-width:thin;scrollbar-color:var(--ac) transparent}
+#cf::-webkit-scrollbar,#pf::-webkit-scrollbar{width:8px}#cf::-webkit-scrollbar-thumb,#pf::-webkit-scrollbar-thumb{background:var(--ac);border-radius:8px}
