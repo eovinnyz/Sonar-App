@@ -718,3 +718,28 @@ html.dsk #hd,html.dsk #mn{zoom:var(--zc,1)}
 html.dsk #side>*{zoom:var(--zr,1)}
 #cf,#pf{scrollbar-width:thin;scrollbar-color:var(--ac) transparent}
 #cf::-webkit-scrollbar,#pf::-webkit-scrollbar{width:8px}#cf::-webkit-scrollbar-thumb,#pf::-webkit-scrollbar-thumb{background:var(--ac);border-radius:8px}
+.card{background:none;border:0;padding:0;overflow:visible}
+.card .cv{border-radius:8px;margin-bottom:8px}
+.card .t,.card .s{padding:0 2px}
+.card.sq .cv,.card.sq .mos{border-radius:8px}
+.mos{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;overflow:hidden;position:relative;aspect-ratio:1;border-radius:8px}
+.mos.m1{display:block}
+.mos .cv,.card .mos .cv{width:100%;height:100%;aspect-ratio:auto;margin:0;border-radius:0;object-fit:cover}
+.mos:after{content:'';position:absolute;inset:0;background:linear-gradient(transparent 45%,rgba(0,0,0,.7));pointer-events:none}
+.mos b{position:absolute;left:12px;bottom:10px;font-size:clamp(16px,2vw,26px);font-weight:800;color:#fff;z-index:1;text-shadow:0 2px 8px rgba(0,0,0,.6);letter-spacing:.02em}
+.rct button{padding:10px 22px;border-radius:999px;background:rgba(128,128,128,.24);font-weight:700;font-size:14px;color:var(--tx)}
+.rct button.pri{background:var(--ac);color:var(--act)}
+.rct button.danger{color:#ff6b6b}
+html.dsk:not(.hp) #bar{display:none}
+html.dsk:not(.hp) #app{padding-bottom:12px}
+html.dsk:not(.hp) .rz{bottom:12px}
+html.dsk:not(.hp) #pf,html.dsk:not(.hp) #cf{bottom:12px}
+@keyframes barUp{from{transform:translateY(140%);opacity:0}to{transform:none;opacity:1}}
+@keyframes sideIn{from{transform:translateX(60px);opacity:0}to{transform:none;opacity:1}}
+html.dsk.hp #bar{animation:barUp .55s cubic-bezier(.2,.9,.3,1)}
+html.dsk:not(.nr) #side{animation:sideIn .5s cubic-bezier(.2,.9,.3,1)}
+.lovh{margin:2px 0 6px}.lov{flex:1;min-height:0;overflow-y:auto}
+.pb.on,.pb[style*="--ac"]{color:var(--ac)}
+#cm{position:fixed;z-index:40;min-width:210px;background:var(--bg);border:1px solid var(--ln);border-radius:12px;padding:6px;box-shadow:0 12px 34px rgba(0,0,0,.45)}
+#cm button{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:8px;font-size:14px;color:var(--tx)}
+#cm button:hover{background:rgba(128,128,128,.2)}
