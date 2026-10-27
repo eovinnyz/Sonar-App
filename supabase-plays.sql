@@ -1,5 +1,5 @@
 -- Contador de reproduções de todos os aparelhos (rode no SQL Editor do Supabase)
-create table plays (song_id text primary key, artist text, title text, n bigint not null default 0);
+create table if not exists plays (song_id text primary key, artist text, title text, n bigint not null default 0);
 alter table plays enable row level security;
 drop policy if exists "plays" on plays;
 create policy "plays" on plays for all using (true) with check (true);
