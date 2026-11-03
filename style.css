@@ -836,3 +836,21 @@ sup.r1{font-size:9px;font-weight:800;margin-left:-4px;vertical-align:top;color:v
 .smh{display:flex;align-items:center;gap:12px;padding:4px 6px 12px;margin-bottom:6px;border-bottom:1px solid var(--ln)}.smh .cv{width:52px;height:52px;border-radius:6px;object-fit:cover;flex:none}
 .svnew{display:flex;gap:8px;margin-top:8px}.svnew input{flex:1;min-width:0;padding:10px 12px;border-radius:10px;border:1px solid var(--ln);background:var(--bg2);color:var(--tx);font:inherit}
 .svnew button{padding:10px 16px;border-radius:10px;background:var(--ac);color:var(--act);font-weight:700}
+
+svg.so{fill:none!important}
+.mbtn svg.so{width:26px;height:26px}.mbtn .mic{width:26px;height:26px;flex:none;display:grid;place-items:center;color:var(--mu)}
+.mbtn.on,.mbtn.on .mic{color:var(--ac)}
+#shb .mbtn{padding:15px 6px;font-size:17px;gap:18px;border-radius:0}
+.shc{display:flex;flex-direction:column;max-height:64vh;overflow:hidden}
+#shb{overflow-y:auto;flex:1;min-height:0;overscroll-behavior:contain;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+.shc.full{max-height:none}.shc:before{display:none!important}.shc.song .shh{display:none}
+.shg{height:26px;display:flex;justify-content:center;align-items:flex-start;touch-action:none;cursor:grab;flex:none}
+.shg:before{content:'';width:44px;height:5px;border-radius:5px;background:rgba(128,128,128,.55);margin-top:8px}
+html.dsk .shg{display:none}
+.shc.song .smh{padding:4px 6px 14px}.smh .cv{width:60px;height:60px;border-radius:6px}.smh .t{font-size:17px;font-weight:700}
+.svc{width:46px;height:46px;flex:none}.svc .cv{width:46px;height:46px;border-radius:6px;object-fit:cover}
+.svn{flex:1;min-width:0;display:flex;flex-direction:column;text-align:left}.svn b{font-weight:700}.svn i{font-style:normal;font-size:12px;color:var(--mu)}
+.svi{display:flex;align-items:center;gap:12px;padding:8px 6px}
+.svk{flex:none;color:var(--mu)}.svk svg{width:26px;height:26px}.svk.on{color:var(--ac)}
+#svp.sheetm:before{content:'';display:block;width:44px;height:5px;border-radius:5px;background:rgba(128,128,128,.55);margin:0 auto 12px}
+.ihd{margin:12px 0 4px;font-weight:700}
